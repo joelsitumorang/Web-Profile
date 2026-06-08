@@ -1,0 +1,135 @@
+{
+  "pawn_categories": [
+    {
+      "name": "Emas & Logam Mulia",
+      "slug": "emas-dan-logam-mulia",
+      "description": "Agunan likuiditas paling tepercaya untuk mengamankan kebutuhan finansial Anda. Kami menerima berbagai bentuk emas fisik dengan penaksiran profesional standar OJK tanpa potongan biaya tersembunyi.",
+      "estimation_rate": "Taksiran hingga 95% dari harga pasar emas harian",
+      "icon_path": "Coins",
+      "max_loan_duration": 120,
+      "details": [
+        "Emas Batangan Antam / UBS / Galeri 24",
+        "Perhiasan Emas (Cincin, Kalung, Gelang, Anting)",
+        "Koin Emas Dinars / Mas Murni"
+      ]
+    },
+    {
+      "name": "Gadget & Smartphone",
+      "slug": "gadget-dan-smartphone",
+      "description": "Dapatkan dana tunai cepat dengan mengagunkan perangkat seluler Anda. Kami memproses taksiran nilai unit berdasarkan kondisi fisik, kesehatan baterai, fungsi sistem, dan kelengkapan kotak pembelian asli.",
+      "estimation_rate": "Taksiran hingga 85% dari nilai pasar barang bekas",
+      "icon_path": "Smartphone",
+      "max_loan_duration": 90,
+      "details": [
+        "Apple iPhone (Seri 12 ke atas, disukai iBox)",
+        "Samsung Galaxy (Seri S & Note, disukai resmi SEIN)",
+        "Apple iPad & Samsung Galaxy Tab"
+      ]
+    },
+    {
+      "name": "Elektronik & Laptop",
+      "slug": "elektronik-dan-laptop",
+      "description": "Mengubah laptop kerja atau perangkat elektronik rumah tangga Anda menjadi modal kerja seketika. Proses inspeksi cepat dan penyimpanan unit dijamin aman dalam lemari penyimpanan ber-AC dan berasuransi.",
+      "estimation_rate": "Taksiran hingga 80% dari harga pasar bekas aktual",
+      "icon_path": "Laptop",
+      "max_loan_duration": 90,
+      "details": [
+        "Laptop & Macbook (Intel Gen-10 / Apple M1 ke atas)",
+        "Smart TV (LED / OLED, minimal ukuran 32 inch)",
+        "Kamera DSLR / Mirrorless (Sony, Canon, Fujifilm)"
+      ]
+    },
+    {
+      "name": "Alat Pertukangan & Mesin Industri",
+      "slug": "alat-pertukangan-dan-mesin-industri",
+      "description": "Penyediaan likuiditas khusus untuk kontraktor dan pekerja profesional. Agunkan perkakas mesin listrik (power tools) Anda untuk menutup kebutuhan operasional proyek tanpa harus menjual aset berharga Anda.",
+      "estimation_rate": "Taksiran hingga 70% dari nilai taksir kelayakan alat",
+      "icon_path": "Hammer",
+      "max_loan_duration": 120,
+      "details": [
+        "Mesin Bor & Demolition Hammer (Bosch, Makita, Dewalt)",
+        "Circular Saw / Miter Saw (Mesin Potong Kayu)",
+        "Mesin Las Inverter (Minimal daya 450W)"
+      ]
+    }
+  ],
+  "pawn_requirements": [
+    {
+      "category": "Identitas Diri",
+      "requirement_detail": "Kartu Tanda Penduduk (KTP) asli yang masih berlaku",
+      "is_mandatory": true,
+      "description": "Digunakan untuk validasi hukum kontrak perjanjian gadai konvensional sesuai regulasi OJK."
+    },
+    {
+      "category": "Dokumen Kepemilikan",
+      "requirement_detail": "Nota Pembelian Asli atau Faktur Toko",
+      "is_mandatory": false,
+      "description": "Sangat dianjurkan untuk gadget dan elektronik guna mempercepat proses taksiran dan menaikkan nilai pinjaman."
+    },
+    {
+      "category": "Kelengkapan Unit",
+      "requirement_detail": "Kotak (Box) Pembelian Asli dan Pengisi Daya (Charger) Bawaan",
+      "is_mandatory": true,
+      "description": "Wajib disertakan untuk kategori gadget dan laptop guna memvalidasi keaslian serta kelayakan barang saat inspeksi."
+    },
+    {
+      "category": "Kondisi Fisik & Fungsi",
+      "requirement_detail": "Unit tidak dalam kondisi terkunci (iCloud / Google Account harus di-logout)",
+      "is_mandatory": true,
+      "description": "Petugas penaksir kami wajib melakukan uji fungsi layar, kamera, suara, dan kesehatan baterai sebelum menetapkan nilai pinjaman."
+    },
+    {
+      "category": "Sertifikat Khusus",
+      "requirement_detail": "Sertifikat LBMA / Kwitansi Toko Emas (Khusus Logam Mulia)",
+      "is_mandatory": true,
+      "description": "Wajib diserahkan bersama emas batangan untuk mencocokkan nomor seri fisik emas dengan sertifikat resmi."
+    }
+  ],
+  "branch_locations": [
+    {
+      "branch_name": "PT MBG Cabang Pasuruan",
+      "address": "Jl. Hasanudin No. 5, Karanganyar, Kec. Panggungrejo, Kota Pasuruan, Jawa Timur 67131",
+      "city": "Pasuruan",
+      "whatsapp_number": "6281213211413",
+      "map_coordinate": "-7.6437896,112.8983213",
+      "map_link": "https://www.google.com/maps/dir//Gadai+MBG+Sangar,+Jl.+Hasanudin+No.5,+Karanganyar,+Kec.+Panggungrejo,+Kota+Pasuruan,+Jawa+Timur+67131/@-7.6480512,112.902144,14z/data=!4m8!4m7!1m0!1m5!1m1!1s0x2dd7c55b488669a7:0xe2ba82d2c0074ac7!2m2!1d112.8983213!2d-7.6437896?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D",
+      "operating_hours": "Senin - Sabtu: 08:00 - 16:00 WIB"
+    },
+    {
+      "branch_name": "PT MBG Cabang Kertajaya Surabaya",
+      "address": "Jl. Kertajaya No. 142, Kertajaya, Kec. Gubeng, Kota Surabaya, Jawa Timur 60282",
+      "city": "Surabaya",
+      "whatsapp_number": "",
+      "map_coordinate": "-7.276435,112.763524",
+      "map_link": "",
+      "operating_hours": "Senin - Sabtu: 08:00 - 16:00 WIB"
+    },
+    {
+      "branch_name": "PT MBG Cabang Soekarno-Hatta Malang",
+      "address": "Jl. Soekarno Hatta No. 45, Jatimulyo, Kec. Lowokwaru, Kota Malang, Jawa Timur 65141",
+      "city": "Malang",
+      "whatsapp_number": "",
+      "map_coordinate": "-7.942352,112.622415",
+      "map_link": "",
+      "operating_hours": "Senin - Sabtu: 08:00 - 16:00 WIB"
+    },
+    {
+      "branch_name": "PT MBG Cabang Candi Sidoarjo",
+      "address": "Jl. Raya Candi No. 12, Gelam, Kec. Candi, Kabupaten Sidoarjo, Jawa Timur 61271",
+      "city": "Sidoarjo",
+      "whatsapp_number": "",
+      "map_coordinate": "-7.481235,112.715421",
+      "map_link": "",
+      "operating_hours": "Senin - Sabtu: 08:00 - 16:00 WIB"
+    },
+    {
+      "branch_name": "PT MBG Cabang Kaliwates Jember",
+      "address": "Jl. Gajah Mada No. 89, Kaliwates Kidul, Kaliwates, Kabupaten Jember, Jawa Timur 68131",
+      "city": "Jember",
+      "whatsapp_number": "",
+      "map_coordinate": "-8.184325,113.682142",
+      "map_link": "",
+      "operating_hours": "Senin - Sabtu: 08:00 - 16:00 WIB"
+    }
+  ]
+}

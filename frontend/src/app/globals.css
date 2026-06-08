@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-slate-200;
+  }
+
+  html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+      'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-white text-slate-950;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    background-color: #E8F1F8; /* mbg-sky */
+    color: #1B3A5C; /* mbg-navy */
+  }
+}
+
+/* ── Premium Apple Navigation Blur ─────────────────────── */
+.nav-blur {
+  background-color: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* ── Subtle Ambient Glow (Hero background ornament) ───── */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.12; }
+  50%      { opacity: 0.28; }
+}
+
+.gradient-bg-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(74, 141, 183, 0.18) 0%,   /* mbg-steel */
+    rgba(27, 58, 92, 0.06) 50%,    /* mbg-navy */
+    rgba(255, 255, 255, 0) 100%
+  );
+  filter: blur(100px);
+  pointer-events: none;
+  animation: pulseGlow 8s ease-in-out infinite;
+}
+
+/* ── Card Hover Lift (Apple-style micro-interaction) ──── */
+.hover-lift {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08);
+  border-color: rgba(74, 141, 183, 0.25); /* mbg-steel */
+}

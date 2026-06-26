@@ -10,7 +10,7 @@ const branches = [
     city: "Pasuruan",
     whatsapp_number: "6281213211413",
     map_link: "https://www.google.com/maps/dir//Gadai+MBG+Sangar,+Jl.+Hasanudin+No.5,+Karanganyar,+Kec.+Panggungrejo,+Kota+Pasuruan,+Jawa+Timur+67131/@-7.6480512,112.902144,14z/data=!4m8!4m7!1m0!1m5!1m1!1s0x2dd7c55b488669a7:0xe2ba82d2c0074ac7!2m2!1d112.8983213!2d-7.6437896?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D",
-    operating_hours: "Senin - Sabtu: 08:00 - 16:00 WIB",
+    operating_hours: "Senin - Sabtu (07:00 - 20:00 WIB), Minggu (10:00 - 17:00 WIB)",
     is_active: true,
   },
   {

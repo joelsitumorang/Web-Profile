@@ -1,21 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Coins,
   Smartphone,
   Car,
   Hammer,
   X,
-  CheckCircle2,
   Info,
-  HelpCircle,
-  TrendingUp,
-  ShieldCheck,
   Calculator,
   ArrowRight,
   Clock,
-  LayoutGrid,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────
@@ -204,33 +202,18 @@ const getRawNumber = (val: string): number =>
 /** Format a number to Indonesian Rupiah display */
 const formatRupiah = (num: number): string => {
   if (!num) return "Rp 0";
-  return "Rp " + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const rounded = Math.round(num);
+  return "Rp " + rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
-/**
- * Dynamic block-based interest calculator.
- *
- * Algorithm (uniform for ALL categories):
- *   - Every 15 days = 1 block
- *   - Each block = 5% interest
- *   - totalBlok = Math.ceil(days / 15)
- *   - rate = totalBlok * 5%
- *
- * If duration exceeds tenor (maxDays), the calculation is split:
- *   1. Tenor interest:  Math.ceil(maxDays / 15) blocks × 5%
- *   2. Late penalty:    Math.ceil(lateDays / 15) blocks × 5%
- *
- * UI label for each line uses dynamic day ranges:
- *   - startDay = ((block - 1) * 15) + 1
- *   - endDay   = block * 15
- *   - e.g. block 3 → "31 – 45 hari"
- *
- * Examples (Gadget, tenor 30 hari):
- *   10 hari  → 1 blok  →  5%  → label "5% (1 – 15 hari)"
- *   25 hari  → 2 blok  → 10%  → label "10% (16 – 30 hari)"
- *   31 hari  → tenor 10% + denda 1 blok 5%  → 15%
- *   60 hari  → tenor 10% + denda 2 blok 10% → 20%
- */
+/** Format Date string YYYY-MM-DD to DD/MM/YYYY */
+const formatDateString = (dateStr: string): string => {
+  if (!dateStr) return "";
+  const parts = dateStr.split("-");
+  if (parts.length !== 3) return dateStr;
+  const [year, month, day] = parts;
+  return `${day}/${month}/${year}`;
+};
 
 interface BreakdownItem {
   label: string;
@@ -240,6 +223,7 @@ interface BreakdownItem {
 }
 
 const calculateInterest = (
+  categorySlug: string,
   principal: number,
   days: number,
   maxDays: number
@@ -249,66 +233,600 @@ const calculateInterest = (
   const breakdown: BreakdownItem[] = [];
   let totalBunga = 0;
 
-  if (days <= maxDays) {
-    // ── Within tenor: single calculation ──
-    const totalBlok = Math.ceil(days / 15);
-    const rate = totalBlok * 0.05;
-    const startDay = ((totalBlok - 1) * 15) + 1;
-    const endDay = totalBlok * 15;
+  if (categorySlug === "emas-dan-logam-mulia") {
+    const billingBlocks = Math.ceil(days / 30);
+    const flatInterestPercentage = billingBlocks * 5;
+    const rate = flatInterestPercentage / 100;
     const amount = Math.round(principal * rate);
+    const startDay = ((billingBlocks - 1) * 30) + 1;
+    const endDay = billingBlocks * 30;
 
     breakdown.push({
-      label: `${(rate * 100).toFixed(0)}% (${startDay} – ${endDay} hari)`,
+      label: `${flatInterestPercentage}% (${startDay} - ${endDay} Hari)`,
       rate,
       amount,
       isLate: false,
     });
     totalBunga = amount;
   } else {
-    // ── Exceeds tenor: split into tenor interest + late penalty ──
+    // Container Categories ("Gadget", "Kendaraan", "Gerabahan")
+    if (days <= maxDays) {
+      // ── Within tenor: single calculation ──
+      const totalBlok = Math.ceil(days / 15);
+      const rate = totalBlok * 0.05;
+      const startDay = ((totalBlok - 1) * 15) + 1;
+      const endDay = totalBlok * 15;
+      const amount = Math.round(principal * rate);
 
-    // 1. Tenor interest (up to maxDays)
-    const tenorBlok = Math.ceil(maxDays / 15);
-    const tenorRate = tenorBlok * 0.05;
-    const tenorStartDay = ((tenorBlok - 1) * 15) + 1;
-    const tenorEndDay = tenorBlok * 15;
-    const tenorAmount = Math.round(principal * tenorRate);
+      breakdown.push({
+        label: `${(rate * 100).toFixed(0)}% (${startDay} – ${endDay} hari)`,
+        rate,
+        amount,
+        isLate: false,
+      });
+      totalBunga = amount;
+    } else {
+      // ── Exceeds tenor: split into tenor interest + late penalty denda blocks ──
 
-    breakdown.push({
-      label: `${(tenorRate * 100).toFixed(0)}% (${tenorStartDay} – ${tenorEndDay} hari)`,
-      rate: tenorRate,
-      amount: tenorAmount,
-      isLate: false,
-    });
-    totalBunga += tenorAmount;
+      // 1. Tenor interest (up to maxDays)
+      const tenorBlok = Math.ceil(maxDays / 15);
+      const tenorRate = tenorBlok * 0.05;
+      const tenorStartDay = ((tenorBlok - 1) * 15) + 1;
+      const tenorEndDay = tenorBlok * 15;
+      const tenorAmount = Math.round(principal * tenorRate);
 
-    // 2. Late penalty (remaining days beyond tenor)
-    const lateDays = days - maxDays;
-    const lateBlok = Math.ceil(lateDays / 15);
-    const lateRate = lateBlok * 0.05;
-    const lateAmount = Math.round(principal * lateRate);
+      breakdown.push({
+        label: `${(tenorRate * 100).toFixed(0)}% (${tenorStartDay} – ${tenorEndDay} hari)`,
+        rate: tenorRate,
+        amount: tenorAmount,
+        isLate: false,
+      });
+      totalBunga += tenorAmount;
 
-    breakdown.push({
-      label: `Denda Keterlambatan (${lateDays} hari)`,
-      rate: lateRate,
-      amount: lateAmount,
-      isLate: true,
-    });
-    totalBunga += lateAmount;
+      // 2. Late penalty (remaining days beyond tenor)
+      const lateDays = days - maxDays;
+      const lateBlok = Math.ceil(lateDays / 15);
+      const lateRate = lateBlok * 0.05;
+      const lateAmount = Math.round(principal * lateRate);
+
+      breakdown.push({
+        label: `Denda Keterlambatan (${lateDays} hari)`,
+        rate: lateRate,
+        amount: lateAmount,
+        isLate: true,
+      });
+      totalBunga += lateAmount;
+    }
   }
 
-  return { total: totalBunga, breakdown };
+  return { total: Math.round(totalBunga), breakdown };
 };
+
+/* ─────────────────────────────────────────────────────────
+   CALENDAR PICKER COMPONENT
+   ───────────────────────────────────────────────────────── */
+
+const formatDisplayDate = (dateStr: string): string => {
+  if (!dateStr) return "Pilih Tanggal";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "Pilih Tanggal";
+  return date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+interface CalendarPickerProps {
+  label: string;
+  value: string; // YYYY-MM-DD
+  onChange: (date: string) => void;
+  minDate?: string; // YYYY-MM-DD
+  hasError?: boolean;
+}
+
+function CalendarPicker({
+  label,
+  value,
+  onChange,
+  minDate,
+  hasError,
+}: CalendarPickerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    let initialDate = new Date();
+    if (value) {
+      const parsed = new Date(value);
+      if (!isNaN(parsed.getTime())) {
+        initialDate = parsed;
+      }
+    }
+    return new Date(initialDate.getFullYear(), initialDate.getMonth(), 1);
+  });
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Close calendar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (value) {
+      const parsed = new Date(value);
+      if (!isNaN(parsed.getTime())) {
+        setCurrentMonth(new Date(parsed.getFullYear(), parsed.getMonth(), 1));
+      }
+    }
+  }, [value]);
+
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+
+  // Get name of current month in Indonesian
+  const monthName = currentMonth.toLocaleDateString("id-ID", {
+    month: "long",
+    year: "numeric",
+  });
+
+  // Calculate days in month
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  // Calculate first day of month (0 = Sunday, 1 = Monday, etc.)
+  const firstDayIndex = new Date(year, month, 1).getDay();
+
+  // Generate blank cells for days of previous month
+  const blanks = Array.from({ length: firstDayIndex }, (_, i) => null);
+  // Generate days of current month
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  // Combine blanks and days
+  const calendarCells = [...blanks, ...days];
+
+  const handlePrevMonth = () => {
+    setCurrentMonth(new Date(year, month - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(new Date(year, month + 1, 1));
+  };
+
+  const handleSelectDay = (day: number) => {
+    const formattedDay = day.toString().padStart(2, "0");
+    const formattedMonth = (month + 1).toString().padStart(2, "0");
+    const selectedDateStr = `${year}-${formattedMonth}-${formattedDay}`;
+    onChange(selectedDateStr);
+    setIsOpen(false);
+  };
+
+  const isDateDisabled = (day: number): boolean => {
+    if (!minDate) return false;
+    const formattedDay = day.toString().padStart(2, "0");
+    const formattedMonth = (month + 1).toString().padStart(2, "0");
+    const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
+    return dateStr < minDate;
+  };
+
+  const isDateSelected = (day: number): boolean => {
+    if (!value) return false;
+    const formattedDay = day.toString().padStart(2, "0");
+    const formattedMonth = (month + 1).toString().padStart(2, "0");
+    const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
+    return dateStr === value;
+  };
+
+  return (
+    <div className="relative space-y-2 flex-grow w-full" ref={containerRef}>
+      <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
+        <Calendar className="w-3.5 h-3.5 text-[#2B6B9E]" />
+        {label}
+      </label>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full bg-slate-50 border rounded-2xl py-3 px-4 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:bg-white text-left flex items-center justify-between transition-all ${
+          hasError
+            ? "border-amber-400 focus:ring-amber-400"
+            : "border-slate-200 focus:ring-[#0B416C]"
+        }`}
+      >
+        <span>{formatDisplayDate(value)}</span>
+        <Calendar className="w-4 h-4 text-slate-400" />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 mt-2 z-50 bg-white border border-slate-100 rounded-2xl shadow-xl p-4 w-[280px] sm:w-[320px] animate-in fade-in slide-in-from-top-2 duration-150">
+          {/* Calendar Header */}
+          <div className="flex items-center justify-between mb-4">
+            <button
+              type="button"
+              onClick={handlePrevMonth}
+              className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-xs font-bold text-[#0B416C] uppercase tracking-wide">
+              {monthName}
+            </span>
+            <button
+              type="button"
+              onClick={handleNextMonth}
+              className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Days of Week */}
+          <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 uppercase mb-2">
+            <div>Min</div>
+            <div>Sen</div>
+            <div>Sel</div>
+            <div>Rab</div>
+            <div>Kam</div>
+            <div>Jum</div>
+            <div>Sab</div>
+          </div>
+
+          {/* Days Grid */}
+          <div className="grid grid-cols-7 gap-1">
+            {calendarCells.map((cell, idx) => {
+              if (cell === null) {
+                return <div key={`empty-${idx}`} />;
+              }
+
+              const disabled = isDateDisabled(cell);
+              const selected = isDateSelected(cell);
+
+              return (
+                <button
+                  key={`day-${cell}`}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => handleSelectDay(cell)}
+                  className={`py-1.5 text-xs font-bold rounded-lg transition-all flex items-center justify-center ${
+                    selected
+                      ? "bg-[#0B416C] text-white"
+                      : disabled
+                      ? "text-slate-200 cursor-not-allowed"
+                      : "text-slate-700 hover:bg-[#F4F8FA] hover:text-[#0B416C]"
+                  }`}
+                >
+                  {cell}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 /* ─────────────────────────────────────────────────────────
    MAIN COMPONENT
    ───────────────────────────────────────────────────────── */
 
+/* ─────────────────────────────────────────────────────────
+   SIMULASI BUNGA CALCULATOR COMPONENT
+   ───────────────────────────────────────────────────────── */
+
+interface SimulasiBungaProps {
+  selectedAgunan: Category;
+}
+
+function SimulasiBunga({ selectedAgunan }: SimulasiBungaProps) {
+  const [jumlahPinjaman, setJumlahPinjaman] = useState<string>("");
+  const [tanggalMasuk, setTanggalMasuk] = useState<string>(
+    () => new Date().toISOString().split("T")[0]
+  );
+  const [tanggalJatuhTempo, setTanggalJatuhTempo] = useState<string>("");
+  const [dayGap, setDayGap] = useState<number>(0);
+
+  /* Centralized calculation of real-time day gap whenever dates change */
+  useEffect(() => {
+    const calculateDayGap = (start: string, end: string) => {
+      if (!start || !end) return 0;
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+      const timeDiff = endDate.getTime() - startDate.getTime();
+      const totalDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+      return totalDays > 0 ? totalDays : 0;
+    };
+
+    setDayGap(calculateDayGap(tanggalMasuk, tanggalJatuhTempo));
+  }, [tanggalMasuk, tanggalJatuhTempo, selectedAgunan]);
+
+  /* Controlled Rupiah input */
+  const handlePinjamanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = getRawNumber(e.target.value);
+    setJumlahPinjaman(raw === 0 ? "" : raw.toLocaleString("id-ID"));
+  };
+
+  const rawPinjaman = getRawNumber(jumlahPinjaman);
+
+  let estimasiBunga = 0;
+  let bungaBreakdown: BreakdownItem[] = [];
+  let isLatePayment = false;
+
+  if (selectedAgunan && rawPinjaman > 0 && dayGap > 0) {
+    const result = calculateInterest(
+      selectedAgunan.slug,
+      rawPinjaman,
+      dayGap,
+      selectedAgunan.maxDays
+    );
+    estimasiBunga = result.total;
+    bungaBreakdown = result.breakdown;
+    isLatePayment =
+      selectedAgunan.slug !== "emas-dan-logam-mulia" &&
+      dayGap > selectedAgunan.maxDays;
+  }
+
+  const totalBayar = Math.round(rawPinjaman + estimasiBunga);
+  const canShowResult = rawPinjaman > 0 && dayGap > 0;
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white border border-slate-100 p-5 rounded-3xl space-y-5 shadow-sm">
+        <h4 className="text-xs font-bold text-[#0B416C] uppercase tracking-wider flex items-center gap-1.5">
+          <Calculator className="w-4 h-4 text-[#2B6B9E]" />
+          Kalkulator Simulasi Bunga & Tenor
+        </h4>
+        <p className="text-[11px] text-slate-500 leading-relaxed">
+          Masukkan jumlah pinjaman yang ingin diajukan serta pilih tanggal masuk
+          dan jatuh tempo untuk melihat estimasi bunga yang harus dibayar.
+        </p>
+
+        {/* Interest rules info */}
+        <div className="bg-[#F4F8FA] border border-[#2B6B9E]/10 p-3 rounded-xl">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+            Ketentuan Bunga Kategori Ini
+          </span>
+          {selectedAgunan.slug === "emas-dan-logam-mulia" ? (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-600 font-medium flex items-center gap-1.5">
+                  <Clock className="w-3 h-3 text-[#2B6B9E]" />
+                  Rumus: Blok 30 Hari
+                </span>
+                <span className="font-bold text-[#0B416C]">+5% / 30 Hari</span>
+              </div>
+              <div className="text-xs text-slate-500 pl-5">
+                Bunga dihitung per kelipatan 30 hari:
+                <br />
+                <code className="bg-slate-200/60 px-1 py-0.5 rounded text-[11px] block mt-1 font-mono">
+                  Bunga = Pinjaman × (Math.ceil(Hari / 30) × 5%)
+                </code>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-600 font-medium flex items-center gap-1.5">
+                  <Clock className="w-3 h-3 text-[#2B6B9E]" />
+                  Rumus: setiap kelipatan 15 hari
+                </span>
+                <span className="font-bold text-[#0B416C]">+5%</span>
+              </div>
+              {(() => {
+                const maxBlok = Math.ceil(selectedAgunan.maxDays / 15);
+                const examples = Array.from(
+                  { length: Math.min(maxBlok, 4) },
+                  (_, i) => {
+                    const blok = i + 1;
+                    const startDay = (blok - 1) * 15 + 1;
+                    const endDay = blok * 15;
+                    const rate = blok * 5;
+                    return (
+                      <div
+                        key={blok}
+                        className="flex items-center justify-between text-xs"
+                      >
+                        <span className="text-slate-500 font-medium pl-5">
+                          {startDay} – {endDay} hari
+                        </span>
+                        <span className="font-semibold text-slate-600">
+                          {rate}%
+                        </span>
+                      </div>
+                    );
+                  }
+                );
+                if (maxBlok > 4) {
+                  examples.push(
+                    <div
+                      key="more"
+                      className="text-[10px] text-slate-400 pl-5 italic"
+                    >
+                      ...dst hingga {maxBlok * 5}% ({selectedAgunan.maxDays}{" "}
+                      hari)
+                    </div>
+                  );
+                }
+                return examples;
+              })()}
+              <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200/50">
+                <span className="text-slate-600 font-medium flex items-center gap-1.5">
+                  <Info className="w-3 h-3 text-amber-500" />
+                  Denda keterlambatan (di atas {selectedAgunan.maxDays} hari)
+                </span>
+                <span className="font-bold text-amber-600">+5% / 15 hari</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Jumlah Pinjaman input */}
+        <div className="space-y-2">
+          <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+            Jumlah Pinjaman Yang Diajukan (Rupiah)
+          </label>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[#0B416C]">
+              Rp
+            </span>
+            <input
+              type="text"
+              value={jumlahPinjaman}
+              onChange={handlePinjamanChange}
+              placeholder="Contoh: 5.000.000"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0B416C] focus:bg-white transition-all"
+            />
+          </div>
+        </div>
+
+        {/* Interactive Date-Based Inputs */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <CalendarPicker
+            label="Tanggal Masuk / Gadai"
+            value={tanggalMasuk}
+            onChange={(date) => {
+              setTanggalMasuk(date);
+              if (tanggalJatuhTempo && date > tanggalJatuhTempo) {
+                setTanggalJatuhTempo("");
+              }
+            }}
+          />
+          <CalendarPicker
+            label="Tanggal Jatuh Tempo / Tebus"
+            value={tanggalJatuhTempo}
+            minDate={tanggalMasuk}
+            onChange={(date) => setTanggalJatuhTempo(date)}
+            hasError={isLatePayment}
+          />
+        </div>
+
+        {isLatePayment && (
+          <p className="text-[10px] text-amber-600 font-semibold flex items-center gap-1 mt-1">
+            <Info className="w-3 h-3" />
+            Melebihi tenor {selectedAgunan.maxDays} hari — denda keterlambatan
+            berlaku.
+          </p>
+        )}
+      </div>
+
+      {/* ── Result Output ──────────────────────── */}
+      {canShowResult ? (
+        <div className="bg-gradient-to-br from-[#0B416C] to-[#2B6B9E] text-white p-5 rounded-3xl space-y-4 shadow-md">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-[#F4F8FA]/70">
+            Hasil Simulasi Bunga
+          </h4>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+            <div>
+              <span className="text-[10px] text-[#F4F8FA]/70 block uppercase tracking-wide">
+                Tenor Kategori
+              </span>
+              <span className="text-lg font-extrabold">
+                {selectedAgunan.tenorLabel.replace("Tenor ", "")}
+              </span>
+            </div>
+            <div>
+              <span className="text-[10px] text-[#F4F8FA]/70 block uppercase tracking-wide">
+                Durasi Pinjaman
+              </span>
+              <span className="text-sm font-extrabold block mt-1">
+                Durasi: {dayGap} Hari (Dari {formatDateString(tanggalMasuk)} s.d{" "}
+                {formatDateString(tanggalJatuhTempo)})
+                {isLatePayment && (
+                  <span className="text-xs font-bold text-amber-300 block mt-0.5">
+                    (terlambat {dayGap - selectedAgunan.maxDays} hari)
+                  </span>
+                )}
+              </span>
+            </div>
+          </div>
+
+          <div className="h-px bg-white/10" />
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-[#F4F8FA]/80">
+                Jumlah Pinjaman Diajukan
+              </span>
+              <span className="text-base font-extrabold text-[#F4F8FA] text-right">
+                {formatRupiah(Math.round(rawPinjaman))}
+              </span>
+            </div>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-[#F4F8FA]/80">
+                  Estimasi Bunga Total
+                </span>
+                <span className="text-sm font-bold text-amber-300 text-right">
+                  {formatRupiah(Math.round(estimasiBunga))}
+                </span>
+              </div>
+              {/* Interest breakdown */}
+              {bungaBreakdown.length > 0 && (
+                <div className="space-y-1 pl-2 border-l border-white/15">
+                  {bungaBreakdown.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between text-[10px]"
+                    >
+                      <span
+                        className={`${
+                          item.isLate ? "text-amber-300/90" : "text-[#F4F8FA]/60"
+                        }`}
+                      >
+                        {item.isLate && "⚠ "}
+                        {item.label}
+                      </span>
+                      <span
+                        className={`font-bold ${
+                          item.isLate ? "text-amber-300" : "text-[#F4F8FA]/70"
+                        }`}
+                      >
+                        {formatRupiah(Math.round(item.amount))}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="h-px bg-white/10" />
+
+          <div className="flex items-center justify-between bg-white/10 p-3 rounded-xl">
+            <span className="text-xs font-bold">Total Bayar Saat Tebus</span>
+            <span className="text-base font-extrabold text-amber-300">
+              {formatRupiah(Math.round(totalBayar))}
+            </span>
+          </div>
+
+          <p className="text-[9px] text-[#F4F8FA]/60 text-center leading-relaxed pt-1">
+            *Hasil simulasi merupakan perkiraan awal. Angka resmi akan ditentukan
+            setelah proses penilaian di cabang PT MBG.
+          </p>
+        </div>
+      ) : (
+        <div className="bg-[#F4F8FA] border border-dashed border-[#2B6B9E]/25 py-8 text-center rounded-3xl">
+          <p className="text-xs text-slate-400 font-medium">
+            Masukkan jumlah pinjaman, tanggal masuk, and tanggal jatuh tempo
+            untuk melihat hasil simulasi.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AgunanSection() {
   const [selectedAgunan, setSelectedAgunan] = useState<Category | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("keunggulan");
-  const [jumlahPinjaman, setJumlahPinjaman] = useState<string>("");
-  const [durasiHari, setDurasiHari] = useState<string>("");
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   /* Close modal on Escape */
@@ -322,9 +840,6 @@ export default function AgunanSection() {
 
   const openModal = (agunan: Category) => {
     setSelectedAgunan(agunan);
-    setActiveTab("keunggulan");
-    setJumlahPinjaman("");
-    setDurasiHari("");
     setModalOpen(true);
     document.body.style.overflow = "hidden";
   };
@@ -334,38 +849,6 @@ export default function AgunanSection() {
     document.body.style.overflow = "unset";
     setTimeout(() => setSelectedAgunan(null), 200);
   };
-
-  /* Controlled Rupiah input */
-  const handlePinjamanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = getRawNumber(e.target.value);
-    setJumlahPinjaman(raw === 0 ? "" : raw.toLocaleString("id-ID"));
-  };
-
-  /* Controlled duration input */
-  const handleDurasiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = getRawNumber(e.target.value);
-    if (!selectedAgunan) return;
-    // No max clamp — allow any duration to handle late payments
-    setDurasiHari(raw === 0 ? "" : String(raw));
-  };
-
-  /* ── Simulation calculations ─────────────────────────── */
-  const rawPinjaman = getRawNumber(jumlahPinjaman);
-  const rawDurasi = parseInt(durasiHari, 10) || 0;
-
-  let estimasiBunga = 0;
-  let bungaBreakdown: BreakdownItem[] = [];
-  let isLatePayment = false;
-
-  if (selectedAgunan && rawPinjaman > 0 && rawDurasi > 0) {
-    const result = calculateInterest(rawPinjaman, rawDurasi, selectedAgunan.maxDays);
-    estimasiBunga = result.total;
-    bungaBreakdown = result.breakdown;
-    isLatePayment = rawDurasi > selectedAgunan.maxDays;
-  }
-
-  const totalBayar = rawPinjaman + estimasiBunga;
-  const canShowResult = rawPinjaman > 0 && rawDurasi > 0;
 
   /* ─────────────────────────────────────────────────────── */
 
@@ -391,7 +874,7 @@ export default function AgunanSection() {
         </div>
 
         {/* ── Card Grid (4 Columns) ──────────────────────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 p-3">
           {categories.map((cat) => {
             const Icon = cat.icon;
 
@@ -403,44 +886,44 @@ export default function AgunanSection() {
             return (
               <div
                 key={cat.slug}
-                className="bg-white rounded-3xl border border-slate-100 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-slate-200 transition-all duration-300 group hover:-translate-y-1"
+                className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-slate-200 transition-all duration-300 group hover:-translate-y-1"
               >
                 {/* Image */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+                <div className="relative h-28 sm:h-36 md:h-48 w-full overflow-hidden bg-slate-100">
                   <img
                     src={cat.image}
                     alt={cat.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                  <span className="absolute top-4 left-4 flex items-center justify-center w-10 h-10 rounded-xl bg-white/95 backdrop-blur shadow-md text-[#0B416C]">
-                    <Icon className="w-5 h-5" />
+                  <span className="absolute top-2 left-2 sm:top-4 sm:left-4 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/95 backdrop-blur shadow-md text-[#0B416C]">
+                    <Icon className="w-4 h-4 sm:w-5 h-5" />
                   </span>
                 </div>
 
                 {/* Card Body */}
-                <div className="p-6 flex flex-col flex-grow justify-between space-y-6">
-                  <div className="space-y-3">
-                    <div className="inline-block px-2.5 py-1 text-[10px] font-bold text-[#0B416C] bg-slate-100 rounded-lg">
+                <div className="p-3 sm:p-4 md:p-6 flex flex-col flex-grow justify-between space-y-3 sm:space-y-4 md:space-y-6">
+                  <div className="space-y-2">
+                    <div className="hidden sm:inline-block px-2.5 py-1 text-[10px] font-bold text-[#0B416C] bg-slate-100 rounded-lg">
                       Gadai Konvensional
                     </div>
-                    <h3 className="text-lg font-bold text-[#0B416C] leading-snug group-hover:text-[#2B6B9E] transition-colors">
+                    <h3 className="text-sm font-bold md:text-xl text-[#0B416C] leading-snug group-hover:text-[#2B6B9E] transition-colors">
                       {cat.name}
                     </h3>
-                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
+                    <p className="hidden md:block text-xs text-slate-500 leading-relaxed line-clamp-3">
                       {cat.description}
                     </p>
                   </div>
 
                   {/* Info & CTA */}
-                  <div className="space-y-4 pt-4 border-t border-slate-100">
-                    <div className="flex items-center justify-between text-xs">
+                  <div className="space-y-2 md:space-y-4 pt-2 md:pt-4 md:border-t border-slate-100">
+                    <div className="hidden md:flex items-center justify-between text-xs">
                       <span className="text-slate-400 font-medium">Tenor</span>
                       <span className="font-bold text-slate-700 bg-slate-50 px-2 py-1 rounded">
                         {cat.tenorLabel}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="hidden md:flex items-center justify-between text-xs">
                       <span className="text-slate-400 font-medium">Bunga</span>
                       <span className="font-bold text-[#2B6B9E] text-right max-w-[60%]">
                         {interestSummary}
@@ -449,10 +932,10 @@ export default function AgunanSection() {
 
                     <button
                       onClick={() => openModal(cat)}
-                      className="w-full bg-[#0B416C] hover:bg-[#083254] text-white py-2.5 rounded-xl font-semibold text-xs tracking-wide transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1.5"
+                      className="w-full bg-[#0B416C] hover:bg-[#083254] text-white py-2 sm:py-2.5 px-2 rounded-lg sm:rounded-xl font-semibold text-[10px] sm:text-xs tracking-wide transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1 sm:gap-1.5"
                     >
-                      Lihat Detail Agunan
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      Simulasi Bunga
+                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                     </button>
                   </div>
                 </div>
@@ -497,367 +980,9 @@ export default function AgunanSection() {
               </button>
             </div>
 
-            {/* Tabs Bar */}
-            <div className="flex border-b border-slate-100 bg-slate-50 overflow-x-auto scrollbar-none">
-              {[
-                { id: "keunggulan", label: "Keunggulan", icon: ShieldCheck },
-                { id: "persyaratan", label: "Persyaratan", icon: Info },
-                { id: "alur", label: "Cara Gadai", icon: HelpCircle },
-                { id: "simulasi", label: "Simulasi Bunga", icon: Calculator },
-                { id: "subkategori", label: "Sub Kategori", icon: LayoutGrid },
-              ].map((tab) => {
-                const TabIcon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex-grow sm:flex-initial flex items-center justify-center gap-1.5 py-4 px-5 text-xs font-bold border-b-2 whitespace-nowrap transition-all ${
-                      isActive
-                        ? "border-[#0B416C] text-[#0B416C] bg-white shadow-inner-bottom"
-                        : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/50"
-                    }`}
-                  >
-                    <TabIcon className="w-4 h-4" />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Tab Content */}
+            {/* Modal Body / Calculator */}
             <div className="p-6 overflow-y-auto flex-grow max-h-[50vh] bg-slate-50/30">
-              {/* ── Tab 1: Keunggulan ────────────────────── */}
-              {activeTab === "keunggulan" && (
-                <div className="space-y-6">
-                  <div className="bg-[#F4F8FA] border border-[#2B6B9E]/10 p-4 rounded-2xl flex gap-3">
-                    <TrendingUp className="w-5 h-5 text-[#2B6B9E] shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="text-xs font-bold text-[#0B416C] uppercase tracking-wide">
-                        Skema Bunga Transparan
-                      </h4>
-                      <p className="text-xs text-slate-500 leading-relaxed mt-1">
-                        {selectedAgunan.tenorLabel} —{" "}
-                        Bunga dinamis <strong className="text-[#0B416C]">5% per kelipatan 15 hari</strong>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      Mengapa Memilih Kami?
-                    </h4>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                      {selectedAgunan.keunggulan.map((point, index) => (
-                        <li
-                          key={index}
-                          className="flex items-start gap-2.5 p-3 bg-white border border-slate-100 rounded-xl shadow-xs"
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-[#2B6B9E] shrink-0 mt-0.5" />
-                          <span className="text-xs text-slate-600 leading-relaxed font-medium">
-                            {point}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
-
-              {/* ── Tab 2: Persyaratan ───────────────────── */}
-              {activeTab === "persyaratan" && (
-                <div className="space-y-5">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Kelengkapan Dokumen & Aset
-                  </h4>
-                  <div className="space-y-3">
-                    {selectedAgunan.persyaratan.map((req, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start gap-3 p-4 bg-white border border-slate-100 rounded-2xl shadow-xs"
-                      >
-                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-[#0B416C] text-xs font-bold shrink-0">
-                          {index + 1}
-                        </span>
-                        <p className="text-xs text-slate-600 leading-relaxed font-medium mt-0.5">
-                          {req}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="p-4 bg-amber-50/50 border border-amber-200/50 rounded-2xl flex items-start gap-3">
-                    <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
-                      *Kelengkapan aksesoris dan dokumen pendukung sangat
-                      direkomendasikan untuk memaksimalkan jumlah pinjaman yang
-                      ditawarkan.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* ── Tab 3: Cara Gadai ────────────────────── */}
-              {activeTab === "alur" && (
-                <div className="space-y-6">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Alur Gadai Mudah 3 Langkah
-                  </h4>
-                  <div className="relative border-l border-slate-200 ml-4 pl-8 space-y-8 py-2">
-                    {selectedAgunan.caraGadai.map((step, index) => (
-                      <div key={index} className="relative">
-                        <span className="absolute -left-12 top-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#0B416C] text-white text-xs font-extrabold shadow-md border-2 border-white">
-                          {index + 1}
-                        </span>
-                        <div>
-                          <h5 className="text-xs font-bold text-[#0B416C] uppercase tracking-wide">
-                            {index === 0
-                              ? "Bawa Unit & Dokumen"
-                              : index === 1
-                              ? "Inspeksi & Penilaian"
-                              : "Cairkan Dana Anda"}
-                          </h5>
-                          <p className="text-xs text-slate-600 leading-relaxed mt-1 font-medium">
-                            {step}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* ── Tab 4: Simulasi Bunga & Tenor ────────── */}
-              {activeTab === "simulasi" && (
-                <div className="space-y-6">
-                  <div className="bg-white border border-slate-100 p-5 rounded-3xl space-y-5 shadow-sm">
-                    <h4 className="text-xs font-bold text-[#0B416C] uppercase tracking-wider flex items-center gap-1.5">
-                      <Calculator className="w-4 h-4 text-[#2B6B9E]" />
-                      Kalkulator Simulasi Bunga & Tenor
-                    </h4>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
-                      Masukkan jumlah pinjaman yang ingin diajukan beserta durasi pinjaman untuk melihat estimasi bunga yang harus dibayar.
-                      Durasi dapat melebihi tenor untuk simulasi keterlambatan.
-                    </p>
-
-                    {/* Interest rules info */}
-                    <div className="bg-[#F4F8FA] border border-[#2B6B9E]/10 p-3 rounded-xl">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                        Ketentuan Bunga Kategori Ini
-                      </span>
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-slate-600 font-medium flex items-center gap-1.5">
-                            <Clock className="w-3 h-3 text-[#2B6B9E]" />
-                            Rumus: setiap kelipatan 15 hari
-                          </span>
-                          <span className="font-bold text-[#0B416C]">+5%</span>
-                        </div>
-                        {(() => {
-                          const maxBlok = Math.ceil(selectedAgunan.maxDays / 15);
-                          // Show a few example tiers
-                          const examples = Array.from({ length: Math.min(maxBlok, 4) }, (_, i) => {
-                            const blok = i + 1;
-                            const startDay = ((blok - 1) * 15) + 1;
-                            const endDay = blok * 15;
-                            const rate = blok * 5;
-                            return (
-                              <div key={blok} className="flex items-center justify-between text-xs">
-                                <span className="text-slate-500 font-medium pl-5">
-                                  {startDay} – {endDay} hari
-                                </span>
-                                <span className="font-semibold text-slate-600">{rate}%</span>
-                              </div>
-                            );
-                          });
-                          if (maxBlok > 4) {
-                            examples.push(
-                              <div key="more" className="text-[10px] text-slate-400 pl-5 italic">
-                                ...dst hingga {maxBlok * 5}% ({selectedAgunan.maxDays} hari)
-                              </div>
-                            );
-                          }
-                          return examples;
-                        })()}
-                        <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200/50">
-                          <span className="text-slate-600 font-medium flex items-center gap-1.5">
-                            <Info className="w-3 h-3 text-amber-500" />
-                            Denda keterlambatan (di atas {selectedAgunan.maxDays} hari)
-                          </span>
-                          <span className="font-bold text-amber-600">+5% / 15 hari</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Jumlah Pinjaman input */}
-                    <div className="space-y-2">
-                      <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                        Jumlah Pinjaman Yang Diajukan (Rupiah)
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[#0B416C]">
-                          Rp
-                        </span>
-                        <input
-                          type="text"
-                          value={jumlahPinjaman}
-                          onChange={handlePinjamanChange}
-                          placeholder="Contoh: 5.000.000"
-                          className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0B416C] focus:bg-white transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Duration input (all categories) */}
-                    <div className="space-y-2">
-                      <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                        Durasi Pinjaman (Hari)
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[#0B416C]">
-                          <Clock className="w-4 h-4" />
-                        </span>
-                        <input
-                          type="text"
-                          value={durasiHari}
-                          onChange={handleDurasiChange}
-                          placeholder={`Tenor ${selectedAgunan.maxDays} hari (boleh lebih)`}
-                          className={`w-full bg-slate-50 border rounded-2xl py-3 pl-11 pr-4 text-sm font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:bg-white transition-all ${
-                            rawDurasi > selectedAgunan.maxDays
-                              ? "border-amber-400 focus:ring-amber-400"
-                              : "border-slate-200 focus:ring-[#0B416C]"
-                          }`}
-                        />
-                      </div>
-                      {rawDurasi > selectedAgunan.maxDays && (
-                        <p className="text-[10px] text-amber-600 font-semibold flex items-center gap-1">
-                          <Info className="w-3 h-3" />
-                          Melebihi tenor {selectedAgunan.maxDays} hari — bunga keterlambatan berlaku.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* ── Result Output ──────────────────────── */}
-                  {canShowResult ? (
-                    <div className="bg-gradient-to-br from-[#0B416C] to-[#2B6B9E] text-white p-5 rounded-3xl space-y-4 shadow-md">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#F4F8FA]/70">
-                        Hasil Simulasi Bunga
-                      </h4>
-
-                      <div className="grid grid-cols-2 gap-4 pt-1">
-                        <div>
-                          <span className="text-[10px] text-[#F4F8FA]/70 block uppercase tracking-wide">
-                            Tenor Kategori
-                          </span>
-                          <span className="text-lg font-extrabold">
-                            {selectedAgunan.tenorLabel.replace("Tenor ", "")}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] text-[#F4F8FA]/70 block uppercase tracking-wide">
-                            Durasi Pinjaman
-                          </span>
-                          <span className="text-lg font-extrabold">
-                            {rawDurasi} hari
-                            {isLatePayment && (
-                              <span className="text-xs font-bold text-amber-300 ml-1">
-                                (terlambat {rawDurasi - selectedAgunan.maxDays} hari)
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="h-px bg-white/10" />
-
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-[#F4F8FA]/80">
-                            Jumlah Pinjaman Diajukan
-                          </span>
-                          <span className="text-base font-extrabold text-[#F4F8FA] text-right">
-                            {formatRupiah(rawPinjaman)}
-                          </span>
-                        </div>
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-[#F4F8FA]/80">
-                              Estimasi Bunga Total
-                            </span>
-                            <span className="text-sm font-bold text-amber-300 text-right">
-                              {formatRupiah(estimasiBunga)}
-                            </span>
-                          </div>
-                          {/* Interest breakdown */}
-                          {bungaBreakdown.length > 0 && (
-                            <div className="space-y-1 pl-2 border-l border-white/15">
-                              {bungaBreakdown.map((item, idx) => (
-                                <div key={idx} className="flex items-center justify-between text-[10px]">
-                                  <span className={`${item.isLate ? 'text-amber-300/90' : 'text-[#F4F8FA]/60'}`}>
-                                    {item.isLate && '⚠ '}{item.label}
-                                  </span>
-                                  <span className={`font-bold ${item.isLate ? 'text-amber-300' : 'text-[#F4F8FA]/70'}`}>
-                                    {formatRupiah(item.amount)}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="h-px bg-white/10" />
-
-                      <div className="flex items-center justify-between bg-white/10 p-3 rounded-xl">
-                        <span className="text-xs font-bold">
-                          Total Bayar Saat Tebus
-                        </span>
-                        <span className="text-base font-extrabold text-amber-300">
-                          {formatRupiah(totalBayar)}
-                        </span>
-                      </div>
-
-                      <p className="text-[9px] text-[#F4F8FA]/60 text-center leading-relaxed pt-1">
-                        *Hasil simulasi merupakan perkiraan awal. Angka resmi
-                        akan ditentukan setelah proses penilaian di cabang PT
-                        MBG.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="bg-[#F4F8FA] border border-dashed border-[#2B6B9E]/25 py-8 text-center rounded-3xl">
-                      <p className="text-xs text-slate-400 font-medium">
-                        Masukkan jumlah pinjaman dan durasi pinjaman untuk melihat hasil simulasi.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ── Tab 5: Sub Kategori ──────────────────── */}
-              {activeTab === "subkategori" && (
-                <div className="space-y-5">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Barang yang Diterima
-                  </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-                    {selectedAgunan.subKategori.map((item, index) => (
-                      <div
-                        key={index}
-                        className="bg-slate-50 text-slate-700 border border-slate-100 text-xs py-2 px-3 rounded-xl text-center font-medium hover:bg-[#F4F8FA] hover:border-[#2B6B9E]/20 hover:text-[#0B416C] transition-all cursor-default"
-                      >
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="p-4 bg-[#F4F8FA] border border-[#2B6B9E]/10 rounded-2xl flex items-start gap-3">
-                    <Info className="w-4 h-4 text-[#2B6B9E] shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
-                      *Daftar barang di atas merupakan contoh komoditas utama yang kami terima. Untuk barang di luar daftar, silakan konsultasikan langsung ke cabang PT MBG terdekat.
-                    </p>
-                  </div>
-                </div>
-              )}
+              <SimulasiBunga selectedAgunan={selectedAgunan} />
             </div>
 
             {/* Footer */}

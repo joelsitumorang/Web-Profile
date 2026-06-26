@@ -80,22 +80,34 @@ export default function Hero() {
                   Jl. Hasanudin No. 5, Karanganyar, Kec. Panggungrejo, Kota Pasuruan, Jawa Timur 67131
                 </p>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Clock className="w-4.5 h-4.5 text-sky-200 shrink-0" />
-                <span>Senin - Sabtu (08:00 - 16:00 WIB)</span>
+              <div className="flex items-start gap-2.5">
+                <Clock className="w-4.5 h-4.5 text-sky-200 shrink-0 mt-0.5" />
+                <div className="flex flex-col text-slate-100">
+                  <span>Senin - Sabtu (07:00 - 20:00 WIB)</span>
+                  <span>Minggu (10:00 - 17:00 WIB)</span>
+                </div>
               </div>
             </div>
 
-            {/* WhatsApp CTA Action */}
-            <div className="pt-2">
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full mt-4">
               <a
                 href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Cabang%20Pasuruan.%20Saya%20tertarik%20dengan%20layanan%20gadai%20agunan%20Anda.%20Mohon%20infonya."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto h-10 px-5 rounded-xl bg-emerald-500 text-white font-bold text-[12px] shadow-md transition-all hover:bg-emerald-600 hover:shadow-lg active:scale-[0.97]"
+                className="inline-flex items-center justify-center gap-2 flex-1 w-full sm:w-1/2 h-10 px-5 rounded-xl bg-emerald-500 text-white font-bold text-[12px] shadow-md transition-all hover:bg-emerald-600 hover:shadow-lg active:scale-[0.97]"
               >
                 <MessageSquare className="w-4 h-4" />
-                Hubungi WA Cabang (0812-1321-1413)
+                Hubungi WA Cabang
+              </a>
+              <a
+                href="https://www.google.com/maps/dir//Gadai+MBG+Sangar,+Jl.+Hasanudin+No.5,+Karanganyar,+Kec.+Panggungrejo,+Kota+Pasuruan,+Jawa+Timur+67131/@-7.6480512,112.902144,14z/data=!4m8!4m7!1m0!1m5!1m1!1s0x2dd7c55b488669a7:0xe2ba82d2c0074ac7!2m2!1d112.8983213!2d-7.6437896?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 flex-1 w-full sm:w-1/2 h-10 px-5 rounded-xl bg-blue-600 text-white font-bold text-[12px] shadow-md transition-all hover:bg-blue-700 hover:shadow-lg active:scale-[0.97]"
+              >
+                <MapPin className="w-4 h-4" />
+                Petunjuk Lokasi (Maps)
               </a>
             </div>
           </div>

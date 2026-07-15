@@ -57,60 +57,20 @@ export default function Hero() {
             </a>
           </div>
 
-          {/* ─── KARTU KONTAK CABANG PASURUAN (Glassmorphism Style) ─── */}
-          <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl p-6 text-left shadow-xl max-w-xl mx-auto space-y-4 transition-all hover:border-white/30 group/card">
-            {/* Header / Title */}
-            <div>
-              <span className="inline-block px-2 py-0.5 rounded bg-emerald-500 text-white font-bold text-[9px] tracking-wider uppercase mb-2">
-                🟢 Pilot Project Aktif
+          {/* Cabang Pasuruan info strip */}
+          <div className="pt-2">
+            <a
+              href="#lokasi"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-xs sm:text-sm font-semibold text-white transition-all hover:bg-white/20 hover:border-white/30"
+            >
+              <MapPin className="w-4 h-4 text-sky-200" />
+              <span>Cabang Pasuruan Aktif — Buka Senin–Minggu</span>
+              <span className="text-sky-200 hover:underline inline-flex items-center gap-0.5 ml-1">
+                Lihat Lokasi &amp; Jam &rarr;
               </span>
-              <h3 className="text-base sm:text-lg font-bold text-white leading-tight">
-                PT MBG Kantor Cabang Pasuruan
-              </h3>
-              <p className="text-[11px] text-sky-100/80 mt-0.5 font-medium">
-                Jaringan Resmi Operasional Wilayah Jawa Timur
-              </p>
-            </div>
-
-            {/* Info Items */}
-            <div className="space-y-3 pt-2 text-[12px] text-slate-100 border-t border-white/10">
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4.5 h-4.5 text-sky-200 shrink-0 mt-0.5" />
-                <p className="leading-relaxed">
-                  Jl. Hasanudin No. 5, Karanganyar, Kec. Panggungrejo, Kota Pasuruan, Jawa Timur 67131
-                </p>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <Clock className="w-4.5 h-4.5 text-sky-200 shrink-0 mt-0.5" />
-                <div className="flex flex-col text-slate-100">
-                  <span>Senin - Sabtu (07:00 - 20:00 WIB)</span>
-                  <span>Minggu (10:00 - 17:00 WIB)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full mt-4">
-              <a
-                href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Cabang%20Pasuruan.%20Saya%20tertarik%20dengan%20layanan%20gadai%20agunan%20Anda.%20Mohon%20infonya."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 flex-1 w-full sm:w-1/2 h-10 px-5 rounded-xl bg-emerald-500 text-white font-bold text-[12px] shadow-md transition-all hover:bg-emerald-600 hover:shadow-lg active:scale-[0.97]"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Hubungi WA Cabang
-              </a>
-              <a
-                href="https://www.google.com/maps/dir//Gadai+MBG+Sangar,+Jl.+Hasanudin+No.5,+Karanganyar,+Kec.+Panggungrejo,+Kota+Pasuruan,+Jawa+Timur+67131/@-7.6480512,112.902144,14z/data=!4m8!4m7!1m0!1m5!1m1!1s0x2dd7c55b488669a7:0xe2ba82d2c0074ac7!2m2!1d112.8983213!2d-7.6437896?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 flex-1 w-full sm:w-1/2 h-10 px-5 rounded-xl bg-blue-600 text-white font-bold text-[12px] shadow-md transition-all hover:bg-blue-700 hover:shadow-lg active:scale-[0.97]"
-              >
-                <MapPin className="w-4 h-4" />
-                Petunjuk Lokasi (Maps)
-              </a>
-            </div>
+            </a>
           </div>
+
 
           {/* Trust Indicators - Positioned at transition boundary */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-16 border-t border-slate-200 max-w-2xl mx-auto text-left text-slate-800">

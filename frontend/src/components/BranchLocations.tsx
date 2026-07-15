@@ -169,52 +169,24 @@ export default function BranchLocations() {
             </div>
           )}
 
-          {/* 2. DISABLED OTHER CARDS (COMING SOON GRID) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {inactiveBranches.map((branch, idx) => (
-              <div
-                key={idx}
-                className="bg-white border border-slate-200/60 rounded-2xl p-7 flex flex-col justify-between opacity-60 grayscale-[20%] relative overflow-hidden"
-              >
-                {/* Visual Lock Overlay Indicator */}
-                <div className="absolute top-4 right-4 text-[9px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1">
-                  <Lock className="w-2.5 h-2.5" />
-                  Belum Aktif
+          {/* 2. DISABLED OTHER CARDS (COMING SOON LIST) */}
+          <div className="mt-12 bg-white/50 border border-slate-200/60 rounded-2xl p-6 text-center space-y-4">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center justify-center gap-1.5">
+              <Lock className="w-3.5 h-3.5" />
+              Rencana Ekspansi Kantor Cabang Berikutnya (Segera Hadir)
+            </h4>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {inactiveBranches.map((branch, idx) => (
+                <div
+                  key={idx}
+                  className="px-4 py-2 bg-white border border-slate-100 rounded-xl text-xs font-bold text-slate-500 shadow-sm flex items-center gap-1.5"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                  <span>{branch.branch_name}</span>
+                  <span className="text-[9px] font-normal text-slate-400 px-1.5 py-0.5 rounded bg-slate-50">Soon</span>
                 </div>
-
-                <div className="space-y-4">
-                  {/* City Tag & Name */}
-                  <div className="space-y-2">
-                    <span className="inline-block px-2 py-0.5 rounded bg-slate-100 text-[9px] font-bold text-slate-500 uppercase tracking-[0.1em]">
-                      {branch.city}
-                    </span>
-                    <h3 className="text-md font-bold text-slate-700">
-                      {branch.branch_name}
-                    </h3>
-                  </div>
-
-                  {/* Address & Hours Faded */}
-                  <div className="space-y-2.5 text-[11px] text-slate-400">
-                    <div className="flex items-start gap-2.5">
-                      <MapPin className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                      <p className="leading-relaxed">{branch.address}</p>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <Clock className="w-3.5 h-3.5 shrink-0" />
-                      <span>{branch.operating_hours}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Coming Soon Horizontal Badge */}
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center">
-                  <div className="w-full py-2.5 px-4 rounded-xl text-[10px] font-bold tracking-wider uppercase text-center bg-slate-50 text-slate-400 border border-slate-200/40 flex items-center justify-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 shrink-0" />
-                    <span>🔒 Akses Digital Segera Hadir</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 

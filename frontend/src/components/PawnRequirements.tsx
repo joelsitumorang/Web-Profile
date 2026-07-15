@@ -16,26 +16,30 @@ const generalRequirements = [
 
 const categorySpecificRequirements = [
   {
-    category: "Emas & Logam Mulia",
+    category: "Emas",
     requirements: "Sertifikat emas resmi (Antam / UBS / Galeri 24) atau nota pembelian perhiasan asli jika ada.",
   },
   {
-    category: "Gadget & Elektronik",
+    category: "Elektronik",
     requirements: "Unit dalam keadaan menyala dan berfungsi normal. Akun personal (iCloud/Google) wajib di-logout. Dus kemasan asli dan charger bawaan sangat dianjurkan.",
   },
   {
-    category: "Kendaraan Bermotor",
+    category: "Alat Rumah Tangga",
+    requirements: "Unit peralatan dalam keadaan bersih, mulus, dan berfungsi normal secara elektrik beserta aksesoris bawaan.",
+  },
+  {
+    category: "Kendaraan",
     requirements: "STNK asli aktif (pajak hidup), BPKB asli atas nama sendiri (atau disertai surat kuasa notaris), dan menyerahkan kunci cadangan.",
   },
   {
-    category: "Gerabahan & Alat Kerja",
-    requirements: "Peralatan/mesin dalam keadaan bersih, berfungsi normal secara mekanik, serta menyerahkan aksesoris pendukung utama.",
+    category: "Alat Tukang",
+    requirements: "Mesin perkakas dalam keadaan bersih dan berfungsi prima secara mekanik beserta kelengkapan pendukung bawaan.",
   },
 ];
 
 export default function PawnRequirements() {
   return (
-    <section className="bg-white py-24 sm:py-28 border-b border-slate-100" id="persyaratan">
+    <section className="bg-white py-16 md:py-24 border-b border-slate-100" id="persyaratan">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
           
@@ -78,7 +82,7 @@ export default function PawnRequirements() {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {generalRequirements.map((item, idx) => (
-                  <div key={idx} className="border border-slate-100 rounded-2xl p-5 bg-white shadow-sm hover:shadow-md transition-all">
+                  <div key={idx} className="bg-slate-50 border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-mbg-ice text-mbg-navy">
                         <FileText className="w-4.5 h-4.5" />
@@ -111,7 +115,7 @@ export default function PawnRequirements() {
                     {categorySpecificRequirements.map((row, index) => (
                       <tr key={index} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50/50">
                         <td className="p-4 text-slate-900 font-extrabold flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 text-[#003B73] shrink-0" />
                           <span>{row.category}</span>
                         </td>
                         <td className="p-4 text-[12px] text-slate-500 leading-relaxed font-medium">

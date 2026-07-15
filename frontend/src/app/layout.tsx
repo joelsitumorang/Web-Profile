@@ -43,7 +43,7 @@ export default function RootLayout({
         {children}
 
         {/* ─── GLOBAL FOOTER ─── */}
-        <footer className="bg-mbg-deep text-slate-400 py-16 border-t border-slate-800">
+        <footer className="bg-[#002244] text-[#E2E8F0] py-16 border-t border-slate-800/30">
           <div className="max-w-6xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
 

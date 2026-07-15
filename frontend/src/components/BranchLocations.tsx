@@ -59,7 +59,7 @@ export default function BranchLocations() {
   const inactiveBranches = branches.filter((b) => !b.is_active);
 
   return (
-    <section className="bg-mbg-ice py-24 sm:py-28" id="lokasi">
+    <section className="bg-[#F8FAFC] py-16 md:py-24 border-b border-slate-100" id="lokasi">
       <div className="max-w-6xl mx-auto px-6">
 
         {/* Header */}

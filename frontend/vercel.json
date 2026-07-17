@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/lelang",
+      "destination": "https://marketplace-mbg-sangar.vercel.app/lelang"
+    },
+    {
+      "source": "/lelang/:path*",
+      "destination": "https://marketplace-mbg-sangar.vercel.app/lelang/:path*"
+    }
+  ]
+}

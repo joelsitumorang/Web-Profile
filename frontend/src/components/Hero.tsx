@@ -149,9 +149,6 @@ export default function Hero() {
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
                   Mengapa Memilih PT Makmur Bersama Gadai?
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed max-w-xl">
-                  Kami berkomitmen menghadirkan layanan pergadaian konvensional yang mengutamakan kenyamanan, transparansi nilai taksiran, serta jaminan perlindungan asuransi penuh atas aset berharga Anda.
-                </p>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-slate-100">

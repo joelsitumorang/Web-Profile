@@ -40,9 +40,6 @@ export default function CaraKerja() {
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-950">
             Hanya 3 Langkah Mudah
           </h2>
-          <p className="text-sm text-slate-500 max-w-lg mx-auto leading-relaxed">
-            Kami memangkas birokrasi berbelit. Proses gadai di PT Makmur Bersama Gadai dirancang cepat, amanah, dan langsung cair di tempat.
-          </p>
         </div>
 
         {/* Steps Grid */}
@@ -54,7 +51,7 @@ export default function CaraKerja() {
                 
                 {/* Step Index & Icon */}
                 <div className="flex items-center justify-between mb-6">
-                  <span className="text-4xl font-black text-slate-100 group-hover:text-mbg-sky transition-colors">
+                  <span className="text-4xl font-black text-[#0B416C]/20 group-hover:text-[#0B416C]/40 transition-colors">
                     {item.step}
                   </span>
                   <span className="flex items-center justify-center w-12 h-12 rounded-xl bg-mbg-ice border border-mbg-steel/10 text-mbg-navy group-hover:bg-mbg-sky transition-colors">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Navbar from "@/components/Navbar";
+import BottomNavbar from "@/components/BottomNavbar";
 import "./globals.css";
 
 const inter = Inter({
@@ -40,7 +41,12 @@ export default function RootLayout({
         <Navbar />
 
         {/* ─── PAGE CONTENT ─── */}
-        {children}
+        <div className="pb-20 md:pb-0">
+          {children}
+        </div>
+
+        {/* ─── MOBILE ONLY BOTTOM NAVIGATION BAR ─── */}
+        <BottomNavbar />
 
         {/* ─── GLOBAL FOOTER ─── */}
         <footer className="bg-[#002244] text-[#E2E8F0] py-16 border-t border-slate-800/30">

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Hero from "@/components/Hero";
+import MarqueeTeaser from "@/components/MarqueeTeaser";
 import CaraKerja from "@/components/CaraKerja";
 import AgunanSection from "@/components/AgunanSection";
 import PawnRequirements from "@/components/PawnRequirements";
@@ -12,6 +13,9 @@ export default function Home() {
     <main className="flex min-h-screen flex-col">
       {/* 1. Hero Section - OJK taglines, trust metrics, main CTA buttons */}
       <Hero />
+
+      {/* Marquee Teaser for accepted items */}
+      <MarqueeTeaser />
 
       {/* 2. Cara Kerja Section - 3 Universal Steps */}
       <CaraKerja />

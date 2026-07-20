@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Coins,
   Smartphone,
   Home,
   Car,
   Hammer,
-  CheckCircle2,
-  ArrowRight,
   ShieldCheck,
 } from "lucide-react";
 
@@ -16,21 +14,22 @@ import {
    TYPE DEFINITIONS
    ───────────────────────────────────────────────────────── */
 
+interface DetailItem {
+  name: string;
+  image: string;
+}
+
 interface Category {
   name: string;
   slug: string;
   image: string;
-  description: string;
   icon: React.ComponentType<any>;
   tenorLabel: string;
-  accent: string;
-  details: string[];
-  estimasiBungaTabel: { tenor: string; bunga: string }[];
-  syaratKunci: string[];
+  details: DetailItem[];
 }
 
 /* ─────────────────────────────────────────────────────────
-   RESTRUCTURED CATEGORY DATA (5 Categories)
+   CATEGORY DATA (5 Categories) — Now with photo per item
    ───────────────────────────────────────────────────────── */
 
 const categories: Category[] = [
@@ -38,128 +37,239 @@ const categories: Category[] = [
     name: "Emas",
     slug: "emas",
     image: "/images/agunan-emas.jpg",
-    description:
-      "Agunan likuiditas paling tepercaya untuk mengamankan kebutuhan finansial Anda. Proses cepat, sewa modal kompetitif, dan penyimpanan aman berasuransi.",
     icon: Coins,
-    tenorLabel: "Tenor s.d. 120 Hari",
-    accent: "gold",
-    details: ["Cincin", "Gelang", "Liontin", "Anting", "Kalung"],
-    estimasiBungaTabel: [
-      { tenor: "1 – 15 Hari", bunga: "5%" },
-      { tenor: "16 – 30 Hari", bunga: "10%" },
-      { tenor: "31 – 45 Hari", bunga: "15%" },
-      { tenor: "46 – 120 Hari", bunga: "+5% per 15 Hari" },
-    ],
-    syaratKunci: [
-      "Kartu Tanda Penduduk (KTP) asli yang masih berlaku.",
-      "Sertifikat emas resmi (jika ada).",
-      "Nota pembelian perhiasan asli (jika ada).",
+    tenorLabel: "Tenor s.d. 4 Bulan",
+    details: [
+      { name: "Cincin", image: "/images/barang/cincin.png" },
+      { name: "Gelang", image: "/images/barang/gelang.png" },
+      { name: "Liontin", image: "/images/barang/liontin.png" },
+      { name: "Anting", image: "/images/barang/anting.png" },
+      { name: "Kalung", image: "/images/barang/kalung.png" },
     ],
   },
   {
     name: "Elektronik",
     slug: "elektronik",
     image: "/images/agunan-gadget.jpg",
-    description:
-      "Dapatkan dana tunai cepat dengan mengagunkan gadget, smartphone, laptop, atau perangkat elektronik Anda. Sewa modal ringan dan tenor ringkas.",
     icon: Smartphone,
-    tenorLabel: "Tenor s.d. 30 Hari",
-    accent: "blue",
-    details: ["HP", "Laptop", "Kulkas", "Salon Aktif", "Kamera", "TV"],
-    estimasiBungaTabel: [
-      { tenor: "1 – 15 Hari", bunga: "5%" },
-      { tenor: "16 – 30 Hari", bunga: "10%" },
-    ],
-    syaratKunci: [
-      "Kartu Tanda Penduduk (KTP) asli yang masih berlaku.",
-      "Unit dalam keadaan menyala, berfungsi normal, dan akun personal (iCloud/Google) wajib logout.",
-      "Dus kemasan asli dan charger bawaan sangat dianjurkan.",
+    tenorLabel: "Tenor s.d. 1 Bulan",
+    details: [
+      { name: "HP", image: "/images/barang/hp.png" },
+      { name: "Laptop", image: "/images/barang/laptop.png" },
+      { name: "Kulkas", image: "/images/barang/kulkas.png" },
+      { name: "Salon Aktif", image: "/images/barang/salon-aktif.png" },
+      { name: "Kamera", image: "/images/barang/kamera.png" },
+      { name: "TV", image: "/images/barang/tv.png" },
     ],
   },
   {
     name: "Alat Rumah Tangga",
     slug: "alat-rumah-tangga",
     image: "/images/agunan-perkakas.jpg",
-    description:
-      "Ubah peralatan rumah tangga elektronik Anda menjadi dana modal cepat dengan proses penilaian yang transparan dan amanah.",
     icon: Home,
-    tenorLabel: "Tenor s.d. 120 Hari",
-    accent: "blue",
-    details: ["Blender", "Rice Cooker", "Dispenser", "Kipas Angin", "Microwave"],
-    estimasiBungaTabel: [
-      { tenor: "1 – 15 Hari", bunga: "5%" },
-      { tenor: "16 – 30 Hari", bunga: "10%" },
-      { tenor: "31 – 45 Hari", bunga: "15%" },
-      { tenor: "46 – 120 Hari", bunga: "+5% per 15 Hari" },
-    ],
-    syaratKunci: [
-      "Kartu Tanda Penduduk (KTP) asli yang masih berlaku.",
-      "Unit peralatan dalam keadaan bersih, mulus, dan berfungsi normal secara elektrik.",
-      "Aksesoris bawaan (kabel daya, wadah, dll) disertakan.",
+    tenorLabel: "Tenor s.d. 4 Bulan",
+    details: [
+      { name: "Blender", image: "/images/barang/blender.png" },
+      { name: "Rice Cooker", image: "/images/barang/rice-cooker.png" },
+      { name: "Dispenser", image: "/images/barang/dispenser.jpg" },
+      { name: "Kipas Angin", image: "/images/barang/kipas-angin.jpg" },
+      { name: "Microwave", image: "/images/barang/microwave.jpg" },
     ],
   },
   {
     name: "Kendaraan",
     slug: "kendaraan",
     image: "/images/agunan-kendaraan.jpg",
-    description:
-      "Agunkan kendaraan bermotor Anda untuk mendapatkan dana cepat dengan sewa modal bersaing dan proses yang terstandarisasi OJK.",
     icon: Car,
-    tenorLabel: "Tenor s.d. 60 Hari",
-    accent: "blue",
-    details: ["Sepeda Motor", "Mobil"],
-    estimasiBungaTabel: [
-      { tenor: "1 – 15 Hari", bunga: "5%" },
-      { tenor: "16 – 30 Hari", bunga: "10%" },
-      { tenor: "31 – 45 Hari", bunga: "15%" },
-      { tenor: "46 – 60 Hari", bunga: "20%" },
-    ],
-    syaratKunci: [
-      "Kartu Tanda Penduduk (KTP) asli yang masih berlaku.",
-      "STNK asli aktif (pajak hidup).",
-      "BPKB asli atas nama sendiri (atau surat kuasa notaris) & kunci cadangan.",
+    tenorLabel: "Tenor s.d. 2 Bulan",
+    details: [
+      { name: "Sepeda Motor", image: "/images/barang/sepeda-motor.jpg" },
+      { name: "Mobil", image: "/images/barang/mobil.jpg" },
     ],
   },
   {
     name: "Alat Tukang",
     slug: "alat-tukang",
     image: "/images/agunan-perkakas.jpg",
-    description:
-      "Penyediaan likuiditas khusus untuk kontraktor dan pekerja profesional dengan mengagunkan perkakas mesin kerja Anda.",
     icon: Hammer,
-    tenorLabel: "Tenor s.d. 120 Hari",
-    accent: "blue",
-    details: ["Mesin Bor", "Mesin Pasrah/Ketam", "Gerinda", "Mesin Las", "Genset"],
-    estimasiBungaTabel: [
-      { tenor: "1 – 15 Hari", bunga: "5%" },
-      { tenor: "16 – 30 Hari", bunga: "10%" },
-      { tenor: "31 – 45 Hari", bunga: "15%" },
-      { tenor: "46 – 120 Hari", bunga: "+5% per 15 Hari" },
-    ],
-    syaratKunci: [
-      "Kartu Tanda Penduduk (KTP) asli yang masih berlaku.",
-      "Mesin perkakas dalam keadaan bersih dan berfungsi prima secara mekanik.",
-      "Kelengkapan pendukung seperti koper box, mata bor bawaan, atau kunci pembuka.",
+    tenorLabel: "Tenor s.d. 4 Bulan",
+    details: [
+      { name: "Mesin Bor", image: "/images/barang/mesin-bor.jpg" },
+      { name: "Mesin Ketam", image: "/images/barang/mesin-ketam.jpg" },
+      { name: "Gerinda", image: "/images/barang/gerinda.jpg" },
+      { name: "Mesin Las", image: "/images/barang/mesin-las.jpg" },
+      { name: "Genset", image: "/images/barang/genset.jpg" },
     ],
   },
 ];
 
+/* ─────────────────────────────────────────────────────────
+   useMediaQuery HOOK
+   ───────────────────────────────────────────────────────── */
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    setMatches(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, [query]);
+
+  return matches;
+}
+
+/* ─────────────────────────────────────────────────────────
+   BENTO GRID (Desktop ≥768px)
+   ───────────────────────────────────────────────────────── */
+
+function BentoGrid({ items, categorySlug }: { items: DetailItem[]; categorySlug: string }) {
+  return (
+    <div key={categorySlug} className="grid grid-cols-3 lg:grid-cols-4 gap-3">
+      {items.map((item, index) => (
+        <div
+          key={`${categorySlug}-${item.name}`}
+          className="relative aspect-square rounded-xl overflow-hidden group cursor-pointer bg-slate-100"
+          style={{
+            animation: `bentoFadeUp 0.4s ease-out ${index * 40}ms both`,
+          }}
+        >
+          <img
+            src={item.image}
+            alt={item.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.12]"
+            loading="lazy"
+          />
+          {/* Hover overlay with name */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end">
+            <span className="px-3.5 pb-3.5 text-sm font-bold text-white tracking-wide drop-shadow-sm">
+              {item.name}
+            </span>
+          </div>
+          {/* Always-visible label for mobile/touch */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300 p-2.5 md:opacity-0 md:group-hover:opacity-0">
+            <span className="text-[10px] font-bold text-white/90">
+              {item.name}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   CAROUSEL SWIPE (Mobile <768px)
+   ───────────────────────────────────────────────────────── */
+
+function CarouselSwipe({ items, categorySlug }: { items: DetailItem[]; categorySlug: string }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Reset scroll on category change
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = 0;
+      setActiveIndex(0);
+    }
+  }, [categorySlug]);
+
+  // Track scroll position for dot indicators
+  const handleScroll = useCallback(() => {
+    if (!scrollRef.current) return;
+    const { scrollLeft, clientWidth } = scrollRef.current;
+    // Each card is ~146px (130 + gap)
+    const cardWidth = 146;
+    const index = Math.round(scrollLeft / cardWidth);
+    setActiveIndex(Math.min(index, items.length - 1));
+  }, [items.length]);
+
+  return (
+    <div className="space-y-4">
+      {/* Scrollable carousel */}
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex gap-3 overflow-x-auto scroll-smooth scrollbar-none px-1 pb-2"
+        style={{
+          scrollSnapType: "x mandatory",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        {items.map((item, index) => (
+          <div
+            key={`${categorySlug}-${item.name}`}
+            className="shrink-0 w-[130px] rounded-xl overflow-hidden bg-white border border-slate-200/60 shadow-sm"
+            style={{
+              scrollSnapAlign: "start",
+              animation: `bentoFadeUp 0.35s ease-out ${index * 50}ms both`,
+            }}
+          >
+            <div className="relative h-[110px] overflow-hidden bg-slate-100">
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div className="px-2.5 py-2">
+              <span className="text-[11px] font-bold text-slate-700 leading-tight">
+                {item.name}
+              </span>
+            </div>
+          </div>
+        ))}
+        {/* End spacer */}
+        <div className="shrink-0 w-4" />
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-1.5">
+        {items.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              if (scrollRef.current) {
+                scrollRef.current.scrollTo({
+                  left: index * 146,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            className={`rounded-full transition-all duration-200 ${
+              index === activeIndex
+                ? "w-5 h-1.5 bg-[#003B73]"
+                : "w-1.5 h-1.5 bg-slate-300 hover:bg-slate-400"
+            }`}
+            aria-label={`Slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   MAIN COMPONENT
+   ───────────────────────────────────────────────────────── */
+
 export default function AgunanSection() {
   const [selectedCategory, setSelectedCategory] = useState<Category>(categories[0]);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
     <section
       className="bg-[#E3F2FD] py-16 md:py-24 border-y border-blue-100/50"
       id="kategori"
     >
-      {/* Animasi Fade-In & Scrollbar Hide Kustom */}
+      {/* Animations & Scrollbar Hide */}
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
+        @keyframes bentoFadeUp {
+          from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.35s ease-out forwards;
         }
         .scrollbar-none::-webkit-scrollbar {
           display: none;
@@ -182,9 +292,8 @@ export default function AgunanSection() {
           </h2>
         </div>
 
-        {/* ── Wadah Tab Mobile (Scrollable Tabs - lg:hidden) ── */}
+        {/* ── Mobile Tabs (Scrollable - lg:hidden) ── */}
         <div className="lg:hidden relative mb-8">
-          {/* Gradient Overlay pada sisi kanan */}
           <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#E3F2FD] via-[#E3F2FD]/70 to-transparent pointer-events-none z-10" />
           
           <div className="flex overflow-x-auto scrollbar-none space-x-2 py-1 px-1">
@@ -207,12 +316,11 @@ export default function AgunanSection() {
                 </button>
               );
             })}
-            {/* Blank item at the end to allow smooth end scrolling past gradient */}
             <div className="w-8 shrink-0" />
           </div>
         </div>
 
-        {/* ── Grid Card Kategori Desktop (Desktop Only - hidden lg:grid) ── */}
+        {/* ── Desktop Category Cards (hidden lg:grid) ── */}
         <div className="hidden lg:grid grid-cols-5 gap-4 mb-10">
           {categories.map((cat) => {
             const Icon = cat.icon;
@@ -261,109 +369,40 @@ export default function AgunanSection() {
           })}
         </div>
 
-        {/* ── Box Detail Barang Dinamis (Dynamic Box List - Vertikal di Mobile) ── */}
+        {/* ── Galeri Foto Barang (Replaces old checklist) ── */}
         <div
           key={selectedCategory.slug}
-          className="animate-fade-in bg-white border border-slate-200/80 rounded-3xl p-5 sm:p-8 shadow-md grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch"
+          className="bg-white border border-slate-200/80 rounded-3xl shadow-md overflow-hidden"
         >
-          {/* Column 1 (lg:col-span-5): Daftar Barang Agunan */}
-          <div className="lg:col-span-5 space-y-5 flex flex-col justify-between">
-            <div className="space-y-4">
+          <div className="p-5 sm:p-8 space-y-5">
+            {/* Header */}
+            <div className="space-y-2">
               <h4 className="text-xs font-bold text-[#0B416C] uppercase tracking-wider border-l-4 border-blue-600 pl-3">
-                📦 Daftar Barang Yang Dapat Diagunkan
+                📸 Galeri Barang Agunan
               </h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Berikut adalah rincian unit/barang dalam kategori <strong className="text-slate-800">{selectedCategory.name}</strong> yang kami layani:
+                Berikut adalah foto barang dalam kategori <strong className="text-slate-800">{selectedCategory.name}</strong> yang kami terima sebagai agunan:
               </p>
-              
-              {/* Grid 2-kolom baik di mobile maupun desktop (grid-cols-2) */}
-              <div className="grid grid-cols-2 gap-2.5 pt-1">
-                {selectedCategory.details.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 border border-slate-100 hover:border-blue-100 hover:bg-blue-50/5 transition-all"
-                  >
-                    <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span className="text-[11px] sm:text-xs font-bold text-slate-700">{item}</span>
-                  </div>
-                ))}
-              </div>
             </div>
 
-            {/* OJK Verification Note */}
-            <div className="pt-4 hidden sm:flex items-center gap-2 text-slate-400 border-t border-slate-100/80">
-              <ShieldCheck className="w-5 h-5 text-mbg-steel" />
-              <span className="text-[10px] font-bold tracking-wide uppercase">Gadai Resmi Diawasi OJK</span>
-            </div>
+            {/* Conditional render: Bento Grid (desktop) vs Carousel (mobile) */}
+            {isDesktop ? (
+              <BentoGrid
+                items={selectedCategory.details}
+                categorySlug={selectedCategory.slug}
+              />
+            ) : (
+              <CarouselSwipe
+                items={selectedCategory.details}
+                categorySlug={selectedCategory.slug}
+              />
+            )}
           </div>
 
-          {/* Column 2 (lg:col-span-4): Bunga / Sewa Modal */}
-          <div className="lg:col-span-4 space-y-4 border-y lg:border-y-0 lg:border-x border-slate-100/80 py-5 lg:py-0 lg:px-8">
-            <h4 className="text-xs font-bold text-[#0B416C] uppercase tracking-wider">
-              📊 Estimasi Sewa Modal (Bunga)
-            </h4>
-            
-            <div className="overflow-hidden border border-slate-100 rounded-2xl">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-[#F4F8FA] border-b border-slate-100">
-                    <th className="p-3 font-bold text-slate-500">Tenor</th>
-                    <th className="p-3 font-bold text-[#0B416C]">Bunga</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {selectedCategory.estimasiBungaTabel.map((row, index) => (
-                    <tr key={index} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50/50 transition-colors">
-                      <td className="p-3 text-slate-600 font-medium">{row.tenor}</td>
-                      <td className="p-3 font-bold text-slate-800">{row.bunga}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="p-3 rounded-xl bg-[#F4F8FA] border border-blue-100/10 text-[10px] text-slate-500 leading-relaxed italic">
-              * Biaya sewa modal flat per hari berdasarkan kelipatan tenor 15 hari.
-            </div>
-          </div>
-
-          {/* Column 3 (lg:col-span-3): Syarat Utama & CTA */}
-          <div className="lg:col-span-3 flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
-              <h4 className="text-xs font-bold text-[#0B416C] uppercase tracking-wider">
-                🔑 Syarat Kunci Utama
-              </h4>
-              <ul className="space-y-2 text-[11px] sm:text-xs text-slate-500">
-                {selectedCategory.syaratKunci.map((syarat, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="text-blue-600 font-bold shrink-0 mt-0.5">•</span>
-                    <span>{syarat}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-3 pt-4 border-t border-slate-100/80">
-              {/* WhatsApp Simulasi Bunga CTA Button (Lebar Penuh) */}
-              <a
-                href={`https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20detail%20bunga%20dan%20syarat%20gadai%20${encodeURIComponent(
-                  selectedCategory.name
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-[#0B416C] hover:bg-[#083254] text-white font-bold text-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
-              >
-                <span>Simulasi Bunga via WhatsApp</span>
-                <ArrowRight className="w-3.5 h-3.5 shrink-0" />
-              </a>
-              
-              <a
-                href="#persyaratan"
-                className="block text-center text-[10px] font-bold text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-wider"
-              >
-                Lihat Regulasi Lengkap &rarr;
-              </a>
-            </div>
+          {/* Footer: OJK Badge */}
+          <div className="px-5 sm:px-8 py-4 border-t border-slate-100/80 flex items-center gap-2 text-slate-400">
+            <ShieldCheck className="w-5 h-5 text-slate-400" />
+            <span className="text-[10px] font-bold tracking-wide uppercase">Gadai Resmi Diawasi OJK</span>
           </div>
         </div>
 

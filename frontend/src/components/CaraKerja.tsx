@@ -10,21 +10,18 @@ export default function CaraKerja() {
       title: "Bawa KTP & Barang",
       description: "Kunjungi kantor cabang PT MBG dengan membawa KTP asli yang masih berlaku dan barang yang ingin Anda gadaikan.",
       icon: FileText,
-      color: "blue",
     },
     {
       step: "02",
       title: "Penilaian & Kesepakatan",
       description: "Staf penilai profesional kami akan memeriksa dan menguji barang jaminan di hadapan Anda untuk menentukan nilai taksiran terbaik.",
       icon: Scale,
-      color: "gold",
     },
     {
       step: "03",
-      title: "Dana Cair Instan",
-      description: "Tandatangani surat kontrak resmi berstandar OJK. Uang pinjaman langsung dicairkan tunai atau transfer bank dalam waktu 15 menit.",
+      title: "Pencairan Dana",
+      description: "Tandatangani surat kontrak resmi berstandar OJK. Uang pinjaman cair tunai atau transfer, biasanya sekitar 15 menit.",
       icon: Banknote,
-      color: "green",
     },
   ];
 

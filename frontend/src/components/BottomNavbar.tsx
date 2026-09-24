@@ -2,20 +2,18 @@
 
 import React, { useState } from "react";
 import { Home, LayoutGrid, Calculator, CircleHelp } from "lucide-react";
-import SimulasiBunga from "@/components/SimulasiBunga";
+import { trackEvent } from "@/utils/trackEvent";
 
 interface NavItem {
   id: string;
   label: string;
   icon: React.ComponentType<any>;
   href: string;
-  isModal?: boolean;
   isExternal?: boolean;
 }
 
 export default function BottomNavbar() {
   const [activeTab, setActiveTab] = useState("beranda");
-  const [isSimulasiOpen, setIsSimulasiOpen] = useState(false);
 
   const navItems: NavItem[] = [
     {
@@ -31,20 +29,23 @@ export default function BottomNavbar() {
       href: "#kategori",
     },
     {
-      id: "simulasi",
-      label: "Simulasi",
+      id: "biaya",
+      label: "Biaya",
       icon: Calculator,
-      href: "#",
-      isModal: true,
+      href: "#biaya",
     },
     {
       id: "perlu-apa",
       label: "Perlu apa?",
       icon: CircleHelp,
-      href: "https://wa.me/6281213211413?text=Halo%20PT%20MBG,%20saya%20butuh%20bantuan%20mengenai%20layanan%20gadai...",
+      href: "https://wa.me/6281213211413?text=Halo%20PT%20MBG,%20saya%20butuh%20bantuan%20mengenai%20layanan%20gadai...%20[dari:nav-bawah]",
       isExternal: true,
     },
   ];
+
+  const handleWAClick = (location: string) => {
+    trackEvent('click_wa', { location });
+  };
 
   return (
     <>
@@ -57,15 +58,14 @@ export default function BottomNavbar() {
             return (
               <a
                 key={item.id}
-                href={item.isModal ? undefined : item.href}
+                href={item.href}
                 target={item.isExternal ? "_blank" : undefined}
                 rel={item.isExternal ? "noopener noreferrer" : undefined}
                 onClick={(e) => {
-                  if (item.isModal) {
-                    e.preventDefault();
-                    setIsSimulasiOpen(true);
-                  }
                   setActiveTab(item.id);
+                  if (item.isExternal) {
+                    handleWAClick('nav-bawah');
+                  }
                 }}
                 className="flex flex-col items-center justify-center flex-1 h-full py-1.5 text-center transition-all duration-200 active:scale-95 group relative cursor-pointer"
               >
@@ -98,12 +98,6 @@ export default function BottomNavbar() {
           })}
         </div>
       </nav>
-
-      {/* ─── Simulasi Bunga Modal ─── */}
-      <SimulasiBunga
-        isOpen={isSimulasiOpen}
-        onClose={() => setIsSimulasiOpen(false)}
-      />
     </>
   );
 }

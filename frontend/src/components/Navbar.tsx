@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { MessageSquare } from "lucide-react";
+import { trackEvent } from "@/utils/trackEvent";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -20,6 +21,10 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleWAClick = (location: string) => {
+    trackEvent('click_wa', { location });
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
@@ -34,7 +39,7 @@ export default function Navbar() {
         }`}
       >
         {/* Brand Logo - Adaptive Image */}
-        <a href="#" className="flex items-center gap-2.5 group" id="nav-brand-logo">
+        <a href="/" className="flex items-center gap-2.5 group" id="nav-brand-logo">
           <img
             src={scrolled ? "/images/logo-mbg.png" : "/images/logo-mbg-white.png"}
             alt="PT Makmur Bersama Gadai"
@@ -48,13 +53,13 @@ export default function Navbar() {
             scrolled ? "text-slate-600" : "text-white/80"
           }`}
         >
-          <a href="#kategori" className={`transition-colors ${scrolled ? "hover:text-mbg-navy" : "hover:text-white"}`} id="nav-link-categories">
+          <a href="/#kategori" className={`transition-colors ${scrolled ? "hover:text-mbg-navy" : "hover:text-white"}`} id="nav-link-categories">
             Kategori Agunan
           </a>
-          <a href="#persyaratan" className={`transition-colors ${scrolled ? "hover:text-mbg-navy" : "hover:text-white"}`} id="nav-link-requirements">
+          <a href="/#persyaratan" className={`transition-colors ${scrolled ? "hover:text-mbg-navy" : "hover:text-white"}`} id="nav-link-requirements">
             Persyaratan
           </a>
-          <a href="#lokasi" className={`transition-colors ${scrolled ? "hover:text-mbg-navy" : "hover:text-white"}`} id="nav-link-locations">
+          <a href="/#lokasi" className={`transition-colors ${scrolled ? "hover:text-mbg-navy" : "hover:text-white"}`} id="nav-link-locations">
             Lokasi Cabang
           </a>
         </nav>
@@ -68,11 +73,12 @@ export default function Navbar() {
                 : "bg-white/10 text-white/90 border-white/20"
             }`}
           >
-            <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${scrolled ? "bg-mbg-steel" : "bg-white"}`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${scrolled ? "bg-mbg-steel" : "bg-white"}`} />
             Diawasi OJK
           </div>
           <a
-            href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20tentang%20gadai..."
+            href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20tentang%20gadai...%20[dari:navbar]"
+            onClick={() => handleWAClick('navbar')}
             target="_blank"
             rel="noopener noreferrer"
             className={`inline-flex h-9 items-center justify-center rounded-lg px-4 text-[12px] font-bold shadow-sm transition-all duration-300 active:scale-[0.97] ${

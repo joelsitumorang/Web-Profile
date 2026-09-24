@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { MapPin, Clock, ExternalLink, MessageSquare, Lock, ShieldCheck } from "lucide-react";
+import { trackEvent } from "@/utils/trackEvent";
 
 const branches = [
   {
@@ -54,9 +55,13 @@ const branches = [
 export default function BranchLocations() {
   const [selectedCity, setSelectedCity] = useState<string>("Pasuruan");
 
-  // We restrict filtering since only Pasuruan is active in this Pilot Project phase.
+  // We restrict filtering since only Pasuruan is active.
   const activeBranch = branches.find((b) => b.is_active);
   const inactiveBranches = branches.filter((b) => !b.is_active);
+
+  const handleWAClick = (location: string) => {
+    trackEvent('click_wa', { location });
+  };
 
   return (
     <section className="bg-[#F8FAFC] py-16 md:py-24 border-b border-slate-100" id="lokasi">
@@ -71,7 +76,8 @@ export default function BranchLocations() {
             Ekspansi Layanan di Jawa Timur
           </h2>
           <p className="text-sm sm:text-base text-slate-500 max-w-xl mx-auto leading-relaxed">
-            Sebagai langkah awal standardisasi OJK, kami meluncurkan Proyek Percontohan (Pilot Project) digital di Cabang Pasuruan sebelum membuka akses di wilayah lainnya.
+            {/* TODO(yoga): keputusan cabang lain ditinjau ulang */}
+            Jaringan kantor cabang PT Makmur Bersama Gadai. Saat ini berfokus melayani nasabah di Cabang Pasuruan sebelum membuka akses di wilayah lainnya.
           </p>
 
           {/* City Filter Pills */}
@@ -103,13 +109,13 @@ export default function BranchLocations() {
 
         {/* Branch Cards Container */}
         <div className="max-w-5xl mx-auto space-y-6">
-          {/* 1. MAIN PILOT CARD - PT MBG CABANG PASURUAN */}
+          {/* 1. MAIN CARD - PT MBG CABANG PASURUAN */}
           {activeBranch && (
             <div className="group relative bg-white border-2 border-mbg-steel/30 rounded-2xl p-8 flex flex-col justify-between shadow-md hover:shadow-lg transition-all ring-4 ring-mbg-sky/40">
               {/* Status Badge */}
               <div className="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[10px] tracking-wider uppercase border border-emerald-200/50">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Cabang Aktif &amp; Pilot Project
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Cabang Aktif
               </div>
 
               <div className="space-y-6">
@@ -146,8 +152,9 @@ export default function BranchLocations() {
               <div className="mt-8 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <a
                   href={`https://wa.me/${activeBranch.whatsapp_number}?text=${encodeURIComponent(
-                    `Halo PT MBG Cabang Pasuruan. Saya ingin menanyakan layanan gadai untuk agunan saya. Mohon infonya.`
+                    `Halo PT MBG Cabang Pasuruan. Saya ingin menanyakan layanan gadai untuk agunan saya. Mohon infonya. [dari:cabang-lokasi]`
                   )}`}
+                  onClick={() => handleWAClick('cabang-lokasi')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 h-12 rounded-xl text-[13px] font-bold bg-mbg-navy text-white transition-all hover:bg-mbg-deep shadow-sm hover:shadow-md active:scale-[0.98]"

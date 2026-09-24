@@ -10,6 +10,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
+import { agunanList } from "@/data/agunan";
+
 /* ─────────────────────────────────────────────────────────
    TYPE DEFINITIONS
    ───────────────────────────────────────────────────────── */
@@ -29,79 +31,25 @@ interface Category {
 }
 
 /* ─────────────────────────────────────────────────────────
-   CATEGORY DATA (5 Categories) — Now with photo per item
+   CATEGORY DATA (Mapped from agunanList)
    ───────────────────────────────────────────────────────── */
 
-const categories: Category[] = [
-  {
-    name: "Emas",
-    slug: "emas",
-    image: "/images/agunan-emas.jpg",
-    icon: Coins,
-    tenorLabel: "Tenor s.d. 4 Bulan",
-    details: [
-      { name: "Cincin", image: "/images/barang/cincin.png" },
-      { name: "Gelang", image: "/images/barang/gelang.png" },
-      { name: "Liontin", image: "/images/barang/liontin.png" },
-      { name: "Anting", image: "/images/barang/anting.png" },
-      { name: "Kalung", image: "/images/barang/kalung.png" },
-    ],
-  },
-  {
-    name: "Elektronik",
-    slug: "elektronik",
-    image: "/images/agunan-gadget.jpg",
-    icon: Smartphone,
-    tenorLabel: "Tenor s.d. 1 Bulan",
-    details: [
-      { name: "HP", image: "/images/barang/hp.png" },
-      { name: "Laptop", image: "/images/barang/laptop.png" },
-      { name: "Kulkas", image: "/images/barang/kulkas.png" },
-      { name: "Salon Aktif", image: "/images/barang/salon-aktif.png" },
-      { name: "Kamera", image: "/images/barang/kamera.png" },
-      { name: "TV", image: "/images/barang/tv.png" },
-    ],
-  },
-  {
-    name: "Alat Rumah Tangga",
-    slug: "alat-rumah-tangga",
-    image: "/images/agunan-perkakas.jpg",
-    icon: Home,
-    tenorLabel: "Tenor s.d. 4 Bulan",
-    details: [
-      { name: "Blender", image: "/images/barang/blender.png" },
-      { name: "Rice Cooker", image: "/images/barang/rice-cooker.png" },
-      { name: "Dispenser", image: "/images/barang/dispenser.jpg" },
-      { name: "Kipas Angin", image: "/images/barang/kipas-angin.jpg" },
-      { name: "Microwave", image: "/images/barang/microwave.jpg" },
-    ],
-  },
-  {
-    name: "Kendaraan",
-    slug: "kendaraan",
-    image: "/images/agunan-kendaraan.jpg",
-    icon: Car,
-    tenorLabel: "Tenor s.d. 2 Bulan",
-    details: [
-      { name: "Sepeda Motor", image: "/images/barang/sepeda-motor.jpg" },
-      { name: "Mobil", image: "/images/barang/mobil.jpg" },
-    ],
-  },
-  {
-    name: "Alat Tukang",
-    slug: "alat-tukang",
-    image: "/images/agunan-perkakas.jpg",
-    icon: Hammer,
-    tenorLabel: "Tenor s.d. 4 Bulan",
-    details: [
-      { name: "Mesin Bor", image: "/images/barang/mesin-bor.jpg" },
-      { name: "Mesin Ketam", image: "/images/barang/mesin-ketam.jpg" },
-      { name: "Gerinda", image: "/images/barang/gerinda.jpg" },
-      { name: "Mesin Las", image: "/images/barang/mesin-las.jpg" },
-      { name: "Genset", image: "/images/barang/genset.jpg" },
-    ],
-  },
-];
+const iconMap: Record<string, React.ComponentType<any>> = {
+  'emas': Coins,
+  'elektronik': Smartphone,
+  'alat-rumah-tangga': Home,
+  'kendaraan': Car,
+  'alat-tukang': Hammer,
+};
+
+const categories: Category[] = agunanList.map(agunan => ({
+  name: agunan.label,
+  slug: agunan.id,
+  image: agunan.image,
+  icon: iconMap[agunan.id] || ShieldCheck,
+  tenorLabel: `Tenor ${agunan.tenor}`,
+  details: agunan.contoh,
+}));
 
 /* ─────────────────────────────────────────────────────────
    useMediaQuery HOOK
@@ -377,8 +325,9 @@ export default function AgunanSection() {
           <div className="p-5 sm:p-8 space-y-5">
             {/* Header */}
             <div className="space-y-2">
-              <h4 className="text-xs font-bold text-[#0B416C] uppercase tracking-wider border-l-4 border-blue-600 pl-3">
-                📸 Galeri Barang Agunan
+              <h4 className="flex items-center gap-1.5 text-xs font-bold text-[#0B416C] uppercase tracking-wider border-l-4 border-blue-600 pl-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                Galeri Barang Agunan
               </h4>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Berikut adalah foto barang dalam kategori <strong className="text-slate-800">{selectedCategory.name}</strong> yang kami terima sebagai agunan:

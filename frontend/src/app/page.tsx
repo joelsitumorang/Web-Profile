@@ -5,7 +5,9 @@ import Hero from "@/components/Hero";
 import MarqueeTeaser from "@/components/MarqueeTeaser";
 import CaraKerja from "@/components/CaraKerja";
 import AgunanSection from "@/components/AgunanSection";
+import BiayaSection from "@/components/BiayaSection";
 import PawnRequirements from "@/components/PawnRequirements";
+import FAQSection from "@/components/FAQSection";
 import BranchLocations from "@/components/BranchLocations";
 
 export default function Home() {
@@ -23,10 +25,16 @@ export default function Home() {
       {/* 3. Pawn Categories Bento Grid - Apple-style category layout */}
       <AgunanSection />
       
-      {/* 4. Pawn Requirements Checklist - Administrative transparency detail */}
+      {/* 4. Cost and Simulation Section */}
+      <BiayaSection />
+
+      {/* 5. Pawn Requirements Checklist - Administrative transparency detail */}
       <PawnRequirements />
       
-      {/* 5. Branch Locations - City filters & active WhatsApp direct APIs */}
+      {/* 6. FAQ Section */}
+      <FAQSection />
+
+      {/* 7. Branch Locations - City filters & active WhatsApp direct APIs */}
       <BranchLocations />
     </main>
   );

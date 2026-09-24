@@ -2,8 +2,13 @@
 
 import React from "react";
 import { ShieldCheck, ArrowRight, CheckCircle, MessageSquare, Clock, MapPin } from "lucide-react";
+import { trackEvent } from "@/utils/trackEvent";
 
 export default function Hero() {
+  const handleWAClick = (location: string) => {
+    trackEvent('click_wa', { location });
+  };
+
   return (
     <>
       {/* ─── FOLD 1: HERO CONTAINER (Solid Deep Blue) ─── */}
@@ -24,22 +29,23 @@ export default function Hero() {
 
             {/* Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-white tracking-tight leading-[1.15] sm:leading-[1.1]" id="hero-headline">
-              Solusi Likuiditas Aman.{" "}
+              Butuh dana cepat di Pasuruan?{" "}
               <br className="hidden sm:block" />
               <span className="bg-gradient-to-r from-white via-sky-100 to-amber-200 bg-clip-text text-transparent">
-                Transparan &amp; Terpercaya.
+                Gadai emas, HP, atau alat kerja.
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-sm sm:text-lg text-slate-100/90 max-w-xl mx-auto leading-relaxed" id="hero-subtext">
-              Dapatkan dana tunai cepat untuk kebutuhan modal usaha atau mendesak dengan jaminan emas, gadget, elektronik, atau alat pertukangan Anda. Proses taksiran jujur dan bebas sewa modal siluman.
+              Ditaksir langsung di depan Anda. Sewa modal 5% (1–15 hari) dan 10% (16–30 hari). Tanpa potongan biaya admin.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               <a
-                href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20tentang%20gadai..."
+                href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20tentang%20gadai...%20[dari:hero]"
+                onClick={() => handleWAClick('hero')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-12 rounded-xl bg-white text-[#003B73] px-8 text-sm font-bold shadow-sm transition-all hover:bg-slate-100 hover:shadow-lg active:scale-[0.98]"
@@ -64,7 +70,7 @@ export default function Hero() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-xs sm:text-sm font-semibold text-white transition-all hover:bg-white/20 hover:border-white/30"
               >
                 <MapPin className="w-4 h-4 text-sky-200" />
-                <span>Cabang Pasuruan Aktif — Buka Senin–Minggu</span>
+                <span>Cabang Pasuruan · Buka Senin–Minggu</span>
                 <span className="text-sky-200 hover:underline inline-flex items-center gap-0.5 ml-1">
                   Lihat Lokasi &amp; Jam &rarr;
                 </span>
@@ -75,16 +81,17 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* ─── FOLD 2: PILOT PROJECT & KEUNGGULAN (Clean White) ─── */}
+      {/* ─── FOLD 2: CABANG & KEUNGGULAN (Clean White) ─── */}
       <section className="bg-white text-slate-800 py-16 sm:py-24 border-b border-slate-100" id="keunggulan">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-16 items-center">
             
-            {/* Left Column (lg:col-span-5): Pilot Project Pasuruan Office Card */}
+            {/* Left Column (lg:col-span-5): Pasuruan Office Card */}
             <div className="lg:col-span-5 bg-slate-50 border border-slate-200/60 rounded-3xl p-6 sm:p-8 space-y-5 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <span className="inline-block px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-200/50 font-bold text-[9px] tracking-wider uppercase">
-                  🟢 Pilot Project Aktif
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block"></span>
+                  Cabang Pasuruan
                 </span>
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                   Cabang Jawa Timur
@@ -96,7 +103,7 @@ export default function Hero() {
                   PT MBG Kantor Cabang Pasuruan
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Sebagai kantor percontohan layanan digital konvensional PT Makmur Bersama Gadai yang melayani nasabah secara resmi dan berizin OJK.
+                  Kantor cabang PT Makmur Bersama Gadai di Pasuruan. Melayani gadai emas, elektronik, kendaraan, dan alat kerja.
                 </p>
               </div>
               
@@ -120,7 +127,8 @@ export default function Hero() {
               
               <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
                 <a
-                  href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Cabang%20Pasuruan.%20Saya%20tertarik%20dengan%20layanan%20gadai%20agunan%20Anda.%20Mohon%20infonya."
+                  href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Cabang%20Pasuruan.%20Saya%20tertarik%20dengan%20layanan%20gadai%20agunan%20Anda.%20Mohon%20infonya.%20[dari:kartu-cabang]"
+                  onClick={() => handleWAClick('kartu-cabang')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 flex-grow h-10 px-4 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-sm hover:bg-emerald-700 transition-all active:scale-[0.98]"
@@ -154,12 +162,12 @@ export default function Hero() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-slate-100">
                 {[
                   {
-                    title: "Taksiran Nilai Maksimal",
-                    text: "Sistem taksiran berpedoman pada harga pasar ter-update untuk menjamin keadilan nilai agunan.",
+                    title: "Tanpa potongan biaya admin",
+                    text: "Gadai tanpa potongan biaya admin di depan. Dana cair utuh sesuai taksiran.",
                   },
                   {
-                    title: "Penyimpanan Ultra-Aman",
-                    text: "Aset disimpan di brankas baja tahan api dengan perlindungan asuransi penuh dan CCTV 24 jam.",
+                    title: "Penyimpanan Aman",
+                    text: "Barang disimpan di brankas kantor.",
                   },
                   {
                     title: "Legalitas Resmi OJK",
@@ -172,7 +180,10 @@ export default function Hero() {
                     </span>
                     <div className="space-y-1">
                       <h4 className="font-extrabold text-xs sm:text-sm text-slate-900">{item.title}</h4>
-                      <p className="text-[10px] sm:text-[11px] text-slate-500 leading-relaxed">{item.text}</p>
+                      <p className="text-[10px] sm:text-[11px] text-slate-500 leading-relaxed">
+                        {item.text}
+                        {item.title === "Penyimpanan Aman" && " {/* TODO(yoga): pulihkan klaim asli jika bukti tersedia */}"}
+                      </p>
                     </div>
                   </div>
                 ))}

@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
+import { agunanList } from "@/data/agunan";
 
 /* ─────────────────────────────────────────────────────────
-   MARQUEE DATA — Mixed items from all categories
+   MARQUEE DATA — Extracted from agunanList
    ───────────────────────────────────────────────────────── */
 
 interface MarqueeItem {
@@ -11,43 +12,23 @@ interface MarqueeItem {
   image: string;
 }
 
-const marqueeRow1: MarqueeItem[] = [
-  { name: "Cincin Emas", image: "/images/barang/cincin.png" },
-  { name: "HP", image: "/images/barang/hp.png" },
-  { name: "Mesin Bor", image: "/images/barang/mesin-bor.jpg" },
-  { name: "Laptop", image: "/images/barang/laptop.png" },
-  { name: "Gelang Emas", image: "/images/barang/gelang.png" },
-  { name: "Kulkas", image: "/images/barang/kulkas.png" },
-  { name: "Sepeda Motor", image: "/images/barang/sepeda-motor.jpg" },
-  { name: "Blender", image: "/images/barang/blender.png" },
-  { name: "Kamera", image: "/images/barang/kamera.png" },
-  { name: "Gerinda", image: "/images/barang/gerinda.jpg" },
-  { name: "Kalung Emas", image: "/images/barang/kalung.png" },
-  { name: "TV", image: "/images/barang/tv.png" },
-];
+// Flatten all `contoh` items from `agunanList`
+const allItems: MarqueeItem[] = agunanList.flatMap(agunan => agunan.contoh);
 
-const marqueeRow2: MarqueeItem[] = [
-  { name: "Liontin Emas", image: "/images/barang/liontin.png" },
-  { name: "Mobil", image: "/images/barang/mobil.jpg" },
-  { name: "Rice Cooker", image: "/images/barang/rice-cooker.png" },
-  { name: "Anting Emas", image: "/images/barang/anting.png" },
-  { name: "Mesin Las", image: "/images/barang/mesin-las.jpg" },
-  { name: "Salon Aktif", image: "/images/barang/salon-aktif.png" },
-  { name: "Dispenser", image: "/images/barang/dispenser.jpg" },
-  { name: "Genset", image: "/images/barang/genset.jpg" },
-  { name: "Kipas Angin", image: "/images/barang/kipas-angin.jpg" },
-  { name: "Microwave", image: "/images/barang/microwave.jpg" },
-  { name: "Mesin Ketam", image: "/images/barang/mesin-ketam.jpg" },
-];
+// Split into two rows
+const midIndex = Math.ceil(allItems.length / 2);
+const marqueeRow1 = allItems.slice(0, midIndex);
+const marqueeRow2 = allItems.slice(midIndex);
 
 /* ─────────────────────────────────────────────────────────
    MARQUEE CARD SUB-COMPONENT
    ───────────────────────────────────────────────────────── */
 
-function MarqueeCard({ item }: { item: MarqueeItem }) {
+function MarqueeCard({ item, hidden = false }: { item: MarqueeItem; hidden?: boolean }) {
   return (
     <a
       href="#kategori"
+      aria-hidden={hidden ? "true" : undefined}
       className="relative shrink-0 w-[140px] sm:w-[160px] h-[96px] rounded-xl overflow-hidden group cursor-pointer"
     >
       <img
@@ -77,9 +58,6 @@ function MarqueeRow({
   items: MarqueeItem[];
   direction: "left" | "right";
 }) {
-  // Duplicate items for seamless looping
-  const duplicated = [...items, ...items];
-
   return (
     <div
       className="flex gap-3 overflow-hidden group/row"
@@ -88,10 +66,13 @@ function MarqueeRow({
       <div
         className={`flex gap-3 shrink-0 ${
           direction === "left" ? "animate-marquee-left" : "animate-marquee-right"
-        } group-hover/row:[animation-play-state:paused]`}
+        } group-hover/row:[animation-play-state:paused] hover:[animation-play-state:paused]`}
       >
-        {duplicated.map((item, i) => (
-          <MarqueeCard key={`${item.name}-${i}`} item={item} />
+        {items.map((item, i) => (
+          <MarqueeCard key={`original-${item.name}-${i}`} item={item} />
+        ))}
+        {items.map((item, i) => (
+          <MarqueeCard key={`duplicate-${item.name}-${i}`} item={item} hidden={true} />
         ))}
       </div>
     </div>
@@ -120,6 +101,11 @@ export default function MarqueeTeaser() {
         }
         .animate-marquee-right {
           animation: marqueeRight 28s linear infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-marquee-left, .animate-marquee-right {
+            animation: none !important;
+          }
         }
       `}</style>
 

@@ -85,11 +85,7 @@ export default function Hero() {
             
             {/* Left Column (lg:col-span-5): Pasuruan Office Card */}
             <div className="lg:col-span-5 bg-slate-50 border border-slate-200/60 rounded-3xl p-6 sm:p-8 space-y-5 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <span className="inline-block px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-200/50 font-bold text-[9px] tracking-wider uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block"></span>
-                  Cabang Pasuruan
-                </span>
+              <div className="flex items-center justify-end">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                   Pasuruan Kota
                 </span>
@@ -158,18 +154,9 @@ export default function Hero() {
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-slate-100">
                 {[
-                  {
-                    title: "Tanpa potongan biaya admin",
-                    text: "Gadai tanpa potongan biaya admin di depan. Dana cair utuh sesuai taksiran.",
-                  },
-                  {
-                    title: "Penyimpanan Aman",
-                    text: "Barang disimpan di brankas kantor.",
-                  },
-                  {
-                    title: "Legalitas Resmi OJK",
-                    text: "Seluruh akad perjanjian didasarkan pada payung hukum pergadaian resmi Indonesia.",
-                  },
+                  { title: "Tanpa potongan biaya admin" },
+                  { title: "Penyimpanan Aman" },
+                  { title: "Legalitas Resmi OJK" },
                 ].map((item, i) => (
                   <div key={i} className="flex flex-col items-start gap-3 p-4 rounded-2xl bg-slate-50/50 border border-slate-100/60 shadow-sm">
                     <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-50 text-[#003B73]">
@@ -177,10 +164,7 @@ export default function Hero() {
                     </span>
                     <div className="space-y-1">
                       <h4 className="font-extrabold text-xs sm:text-sm text-slate-900">{item.title}</h4>
-                      <p className="text-[10px] sm:text-[11px] text-slate-500 leading-relaxed">
-                        {item.text}
-                        {/* TODO(yoga): pulihkan klaim asli jika bukti tersedia */}
-                      </p>
+                      {/* TODO(yoga): pulihkan klaim asli dan deskripsi jika bukti tersedia */}
                     </div>
                   </div>
                 ))}

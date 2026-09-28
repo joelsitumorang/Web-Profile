@@ -85,19 +85,10 @@ export default function Hero() {
             
             {/* Left Column (lg:col-span-5): Pasuruan Office Card */}
             <div className="lg:col-span-5 bg-slate-50 border border-slate-200/60 rounded-3xl p-6 sm:p-8 space-y-5 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-end">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Pasuruan Kota
-                </span>
-              </div>
-              
               <div className="space-y-2">
-                <h3 className="text-lg sm:text-xl font-extrabold text-[#0B416C] leading-tight">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#0B416C] leading-tight">
                   PT MBG Kantor Cabang Pasuruan
                 </h3>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Kantor cabang PT Makmur Bersama Gadai di Pasuruan. Melayani gadai emas, elektronik, kendaraan, dan alat kerja.
-                </p>
               </div>
               
               <div className="h-px bg-slate-200/60" />
@@ -158,12 +149,12 @@ export default function Hero() {
                   { title: "Penyimpanan Aman" },
                   { title: "Legalitas Resmi OJK" },
                 ].map((item, i) => (
-                  <div key={i} className="flex flex-col items-start gap-3 p-4 rounded-2xl bg-slate-50/50 border border-slate-100/60 shadow-sm">
-                    <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-50 text-[#003B73]">
-                      <CheckCircle className="w-5 h-5" />
+                  <div key={i} className="flex flex-col items-center sm:items-start gap-4 p-5 rounded-2xl bg-white border-2 border-[#2B6B9E]/15 shadow-[0_4px_20px_-4px_rgba(11,65,108,0.1)] hover:shadow-[0_8px_30px_-4px_rgba(11,65,108,0.15)] hover:-translate-y-1 transition-all duration-300">
+                    <span className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#2B6B9E] to-[#003B73] text-white shadow-md">
+                      <CheckCircle className="w-6 h-6" />
                     </span>
-                    <div className="space-y-1">
-                      <h4 className="font-extrabold text-xs sm:text-sm text-slate-900">{item.title}</h4>
+                    <div className="space-y-1 w-full text-center sm:text-left">
+                      <h4 className="font-extrabold text-sm sm:text-[15px] text-[#0B416C] leading-snug">{item.title}</h4>
                       {/* TODO(yoga): pulihkan klaim asli dan deskripsi jika bukti tersedia */}
                     </div>
                   </div>

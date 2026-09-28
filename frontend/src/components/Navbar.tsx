@@ -24,11 +24,13 @@ export default function Navbar() {
   return (
     <>
       <div 
-        className="sticky top-0 z-50 px-4 transition-all duration-300 w-full"
+        className="fixed top-0 left-0 right-0 z-50 px-4 transition-all duration-300 w-full"
         style={{ paddingTop: 'calc(1rem + env(safe-area-inset-top))' }}
       >
         <header
           className={`mx-auto w-full max-w-[960px] rounded-full transition-all duration-300 border ${
+            isMobileMenuOpen ? "opacity-0 pointer-events-none scale-95" : "opacity-100 scale-100"
+          } ${
             scrolled
               ? "bg-white/80 backdrop-blur-xl backdrop-saturate-150 border-white/60 shadow-lg supports-[not_(backdrop-filter:blur(1px))]:bg-white"
               : "bg-white/55 backdrop-blur-xl backdrop-saturate-150 border-white/60 shadow-md supports-[not_(backdrop-filter:blur(1px))]:bg-white/95"

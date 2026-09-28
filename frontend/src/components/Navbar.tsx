@@ -21,10 +21,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleWAClick = (location: string) => {
-    trackEvent('click_wa', { location });
-  };
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
@@ -60,7 +56,7 @@ export default function Navbar() {
             Persyaratan
           </a>
           <a href="/#lokasi" className={`transition-colors ${scrolled ? "hover:text-mbg-navy" : "hover:text-white"}`} id="nav-link-locations">
-            Lokasi Cabang
+            Lokasi
           </a>
         </nav>
 
@@ -77,8 +73,8 @@ export default function Navbar() {
             Diawasi OJK
           </div>
           <a
-            href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20tentang%20gadai...%20[dari:navbar]"
-            onClick={() => handleWAClick('navbar')}
+            href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20tentang%20gadai."
+            onClick={() => trackEvent('wa_click', { source: 'navbar' })}
             target="_blank"
             rel="noopener noreferrer"
             className={`inline-flex h-9 items-center justify-center rounded-lg px-4 text-[12px] font-bold shadow-sm transition-all duration-300 active:scale-[0.97] ${

@@ -20,7 +20,7 @@ export default function BottomNavbar() {
       id: "beranda",
       label: "Beranda",
       icon: Home,
-      href: "#",
+      href: "/",
     },
     {
       id: "agunan",
@@ -38,14 +38,10 @@ export default function BottomNavbar() {
       id: "perlu-apa",
       label: "Perlu apa?",
       icon: CircleHelp,
-      href: "https://wa.me/6281213211413?text=Halo%20PT%20MBG,%20saya%20butuh%20bantuan%20mengenai%20layanan%20gadai...%20[dari:nav-bawah]",
+      href: "https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20tentang%20gadai.",
       isExternal: true,
     },
   ];
-
-  const handleWAClick = (location: string) => {
-    trackEvent('click_wa', { location });
-  };
 
   return (
     <>
@@ -64,7 +60,7 @@ export default function BottomNavbar() {
                 onClick={(e) => {
                   setActiveTab(item.id);
                   if (item.isExternal) {
-                    handleWAClick('nav-bawah');
+                    trackEvent('wa_click', { source: 'nav-bawah' });
                   }
                 }}
                 className="flex flex-col items-center justify-center flex-1 h-full py-1.5 text-center transition-all duration-200 active:scale-95 group relative cursor-pointer"

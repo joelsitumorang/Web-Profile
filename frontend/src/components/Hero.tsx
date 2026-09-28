@@ -5,9 +5,6 @@ import { ShieldCheck, ArrowRight, CheckCircle, MessageSquare, Clock, MapPin } fr
 import { trackEvent } from "@/utils/trackEvent";
 
 export default function Hero() {
-  const handleWAClick = (location: string) => {
-    trackEvent('click_wa', { location });
-  };
 
   return (
     <>
@@ -44,8 +41,8 @@ export default function Hero() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               <a
-                href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20tentang%20gadai...%20[dari:hero]"
-                onClick={() => handleWAClick('hero')}
+                href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Pasuruan,%20saya%20ingin%20tanya%20tentang%20gadai."
+                onClick={() => trackEvent('wa_click', { source: 'hero' })}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-12 rounded-xl bg-white text-[#003B73] px-8 text-sm font-bold shadow-sm transition-all hover:bg-slate-100 hover:shadow-lg active:scale-[0.98]"
@@ -94,7 +91,7 @@ export default function Hero() {
                   Cabang Pasuruan
                 </span>
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Cabang Jawa Timur
+                  Pasuruan Kota
                 </span>
               </div>
               
@@ -127,8 +124,8 @@ export default function Hero() {
               
               <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
                 <a
-                  href="https://wa.me/6281213211413?text=Halo%20PT%20MBG%20Cabang%20Pasuruan.%20Saya%20tertarik%20dengan%20layanan%20gadai%20agunan%20Anda.%20Mohon%20infonya.%20[dari:kartu-cabang]"
-                  onClick={() => handleWAClick('kartu-cabang')}
+                  href={`https://wa.me/6281213211413?text=${encodeURIComponent("Halo PT MBG Cabang Pasuruan, saya ingin tanya tentang gadai. Mohon infonya.")}`}
+                  onClick={() => trackEvent('wa_click', { source: 'kartu-cabang' })}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 flex-grow h-10 px-4 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-sm hover:bg-emerald-700 transition-all active:scale-[0.98]"
@@ -182,7 +179,7 @@ export default function Hero() {
                       <h4 className="font-extrabold text-xs sm:text-sm text-slate-900">{item.title}</h4>
                       <p className="text-[10px] sm:text-[11px] text-slate-500 leading-relaxed">
                         {item.text}
-                        {item.title === "Penyimpanan Aman" && " {/* TODO(yoga): pulihkan klaim asli jika bukti tersedia */}"}
+                        {/* TODO(yoga): pulihkan klaim asli jika bukti tersedia */}
                       </p>
                     </div>
                   </div>

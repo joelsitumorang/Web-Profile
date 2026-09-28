@@ -131,7 +131,8 @@ export default function PawnRequirements() {
               <div className="flex items-center gap-2.5 justify-center py-4 bg-[#F4F8FA] rounded-2xl border border-[#2B6B9E]/10">
                 <ShieldCheck className="w-5 h-5 text-mbg-steel" />
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
-                  Seluruh barang jaminan tersimpan aman dalam brankas besi berasuransi penuh
+                  Seluruh barang jaminan tersimpan aman di brankas kantor
+                  {/* TODO(yoga): pulihkan klaim asli (asuransi penuh, brankas besi) jika bukti tersedia */}
                 </span>
               </div>
             </div>

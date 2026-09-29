@@ -34,8 +34,8 @@ export default function Hero() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-lg text-slate-100/90 max-w-xl mx-auto leading-relaxed" id="hero-subtext">
-              Ditaksir langsung di depan Anda. Sewa modal 5% (1–15 hari) dan 10% (16–30 hari). Tanpa potongan biaya admin.
+            <p className="text-sm sm:text-lg text-slate-100/90 max-w-xl mx-auto leading-relaxed capitalize" id="hero-subtext">
+              taksiran tinggi, tanpa biaya admin, proses cepat dan mudah
             </p>
 
             {/* CTA Buttons */}
